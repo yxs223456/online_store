@@ -1,0 +1,128 @@
+{include file="public/header" /}
+<body class="gray-bg">
+<div class="wrapper wrapper-content animated fadeInRight">
+    <div class="layui-tab layui-tab-brief" lay-filter="constantsTabBrief">
+        <ul class="layui-tab-title">
+            <li><a href="{:url('index')}">数据库</a></li>
+            <li><a href="{:url('indexRedis')}">redis</a></li>
+            <li><a href="{:url('indexConstants')}">常量配置</a></li>
+            <li class="layui-this"><a href="{:url('indexObject')}">对象配置</a></li>
+        </ul>
+        <div class="layui-tab-content">
+            <!-- Panel Other -->
+            <div class="ibox float-e-margins">
+                <div class="ibox-title">
+                    <h5>公共配置对象</h5>
+                </div>
+                <div class="ibox-content">
+                    <!--搜索框开始-->
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <div  class="col-sm-2" style="width: 100px">
+                                <div class="input-group" >
+                                    <a href="{:url('addObject')}"><button class="btn btn-outline btn-primary" type="button">添加</button></a>
+                                </div>
+                            </div>
+                            <form name="admin_list_sea" id="searchForm" class="form-search" method="post" action="{:url('indexObject')}">
+                                <div class="col-sm-3">
+                                    <div class="input-group">
+                                        <input type="text" id="key" class="form-control" name="constants_code" value="{$constants_code|default=''}" placeholder="输入需查询的联系方式" />
+                                        <span class="input-group-btn">
+                                    <button type="submit" class="btn btn-primary"><i class="fa fa-search"></i> 搜索</button>
+                                </span>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                    <!--搜索框结束-->
+                    <div class="hr-line-dashed"></div>
+
+                    <div class="example-wrap">
+                        <div class="example">
+                            <table class="table table-bordered table-hover">
+                                <thead>
+                                <tr class="long-tr">
+                                    <!--<th>ID</th>-->
+                                    <th>常量名称</th>
+                                    <th>常量code</th>
+                                    <th>常量对象</th>
+                                    <th>状态</th>
+                                    <th>更新时间</th>
+                                    <th>操作</th>
+                                </tr>
+                                </thead>
+                                <tbody id="list-content">
+                                {foreach $list as $vo}
+                                <tr class="long-td">
+                                    <!--<td>{$vo["id"]}</td>-->
+                                    <td>{$vo["constants_name"]}</td>
+                                    <td>{$vo["constants_code"]}</td>
+                                    <td>{$vo["object"]}</td>
+                                    <td>
+                                        {if condition="$vo['status'] eq 1"}
+                                        <a class="red" href="{:url('deactivate',['id' => $vo['id']])}">
+                                            <div><span class="label label-info">已开启</span></div>
+                                        </a>
+                                        {else /}
+                                        <a class="red" href="{:url('activate',['id' => $vo['id']])}">
+                                            <div><span class="label label-danger">已禁用</span></div>
+                                        </a>
+                                        {/if}
+                                    </td>
+                                    <td>{$vo["update_time"]}</td>
+                                    <td>
+                                        <a href="{:url('editObject',['id'=>$vo['id']])}" class="btn btn-primary btn-xs">
+                                            <i class="fa fa-paste"></i> 编辑</a>&nbsp;&nbsp;
+                                        <a href="{:url('delete',['id'=>$vo['id']])}" class="btn btn-danger btn-xs">
+                                            <i class="fa fa-trash-o"></i> 删除</a>
+                                    </td>
+                                </tr>
+                                {/foreach}
+                                </tbody>
+                            </table>
+                            <div id="laypage">
+                            </div>
+                        </div>
+                    </div>
+                    <!-- End Example Pagination -->
+                </div>
+            </div>
+        </div>
+        <!-- End Panel Other -->
+        </div>
+    </div>
+
+</div>
+
+{include file="public/footer" /}
+<script type="text/javascript" src="/static/admin/js/laypage.js"></script>
+<script type="text/javascript">
+    layer.photos({
+        photos: '.layer-photos-demo'
+//  ,anim: 5 //0-6的选择，指定弹出图片动画类型，默认随机（请注意，3.0之前的版本用shift参数）
+    });
+
+    layui.use(['laypage', 'layer'], function(){
+        var laypage = layui.laypage
+            ,layer = layui.layer;
+
+        //完整功能
+        laypage.render({
+            elem: 'laypage'
+            ,count: '{$list->total()}' // 总数据条数
+            ,curr: '{$list->currentPage()}' // 当前第几页
+            ,limit: '{$list->listRows()}'   // 每页显示条数
+            ,layout: ['count', 'prev', 'page', 'next', 'refresh', 'skip']
+            ,jump: function(obj, first){
+                //首次不执行
+                if(!first){
+                    $("#searchForm").attr('action', '{:url("indexObject")}?page='+obj.curr);
+                    $("#searchForm").submit();
+                }
+            }
+        });
+    });
+</script>
+</body>
+</html>
