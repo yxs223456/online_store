@@ -8,6 +8,7 @@ use app\admin\service\Admin as adminService;
 use app\admin\service\AuthGroup as authGroupService;
 use app\admin\service\AuthGroupAccess as authGroupAccessService;
 use app\admin\service\AuthRule as authRuleService;
+use app\admin\service\Company as companyService;
 
 class Base extends Controller {
 
@@ -15,6 +16,7 @@ class Base extends Controller {
     protected $authGroupService;
     protected $authGroupAccessService;
     protected $authRuleService;
+    protected $companyService;
 
     /**
      * 依赖注入
@@ -23,9 +25,10 @@ class Base extends Controller {
      * @param authGroupService $authGroupService
      * @param authGroupAccessService $authGroupAccessService
      * @param authRuleService $authRuleService
+     * @param companyService $companyService
      */
     public function __construct( AdminService $adminService, AuthGroupService $authGroupService,
-                                AuthGroupAccessService $authGroupAccessService, AuthRuleService $authRuleService){
+                                AuthGroupAccessService $authGroupAccessService, AuthRuleService $authRuleService, companyService $companyService){
 
         parent::__construct();
 
@@ -33,5 +36,6 @@ class Base extends Controller {
         $this->authGroupService = $authGroupService;
         $this->authGroupAccessService = $authGroupAccessService;
         $this->authRuleService = $authRuleService;
+        $this->companyService = $companyService;
     }
 }
