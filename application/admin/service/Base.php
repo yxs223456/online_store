@@ -26,4 +26,16 @@ class Base extends Model {
         return $returnData;
     }
 
+    public function getListByCondition($condition)
+    {
+
+        $list = $this->currentModel
+            ->where($condition['whereSql'])
+            ->order('id desc')
+            ->paginate(\config("paginate.list_rows"), false,
+                ["query" => $condition['pageMap']]);
+
+        return $list;
+    }
+
 }

@@ -17,7 +17,20 @@ class LeftNav{
 		}
 		return $arr;
 	}
-	
+
+    static public function goodsClassifyRule($cate , $lefthtml = '├ ' , $parentUuid="" , $lvl=0, $leftpin=0 ){
+        $arr=array();
+        foreach ($cate as $v){
+            if($v['parent_uuid']==$parentUuid){
+                $v['lvl']=$lvl + 1;
+                $v['leftpin']=$leftpin + 0;//左边距
+                $v['lefthtml']=str_repeat($lefthtml,$lvl);
+                $arr[]=$v;
+                $arr= array_merge($arr,self::goodsClassifyRule($cate,$lefthtml,$v['uuid'],$lvl+1 , $leftpin+20));
+            }
+        }
+        return $arr;
+    }
 	
 }
 

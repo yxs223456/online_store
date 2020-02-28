@@ -16,6 +16,7 @@ class Menu extends Common {
 
         $menuList = $this->authRuleService->getAllMenu();
 
+
         $arr = $nav::rule($menuList);
 
         $this->assign('list',$arr);
