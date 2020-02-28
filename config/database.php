@@ -13,13 +13,13 @@ return [
     // 数据库类型
     'type'            => 'mysql',
     // 服务器地址
-    'hostname'        => 'localhost',
+    'hostname'        => '47.92.77.145',
     // 数据库名
-    'database'        => 'outsourcing_ieee',
+    'database'        => 'online_store',
     // 用户名
-    'username'        => 'weshare',
+    'username'        => 'web',
     // 密码
-    'password'        => 'admin',
+    'password'        => '123.abcABC',
     // 端口
     'hostport'        => '3306',
     // 连接dsn
