@@ -7,7 +7,7 @@ class Company extends Common {
     const LENGTH = 16;
 
     /**
-     * 配置列表
+     * 列表
      * @return mixed
      */
     public function index() {
@@ -23,7 +23,7 @@ class Company extends Common {
     }
 
     /**
-     * 添加配置页面
+     * 添加页面
      * @return mixed
      */
     public function add() {
@@ -40,12 +40,16 @@ class Company extends Common {
         $param["uuid"] = $this->companyService->getUuid(self::LENGTH);
         $param["create_time"] = time();
         $param["update_time"] = time();
+        $param["is_delete"] = 0;
         $companyService = $this->companyService;
 
-        !$this->validateName($param["name"]) && $this->error('公司名称值不合法');
-        !$this->validateCode($param["code"]) && $this->error("公司编号值不合法");
-        !$this->validatePhone($param["phone"]) && $this->error("公司电话值不合法");
-        !$this->validateUuid($param["uuid"]) && $this->error("重新提交");
+        //数据校验
+        $validate = validate("CompanyValidate");
+        if(false === $validate->scene($this->request->action(true))
+                ->check($param)) {
+            $this->error($validate->getError());
+        }
+
         try {
 
             $result = $companyService->saveByAllowField($param);
@@ -54,7 +58,7 @@ class Company extends Common {
                 $this->error($companyService->getError());
             }
 
-            $this->success("配置添加成功",url("index"));
+            $this->success("添加成功",url("index"));
 
         } catch(\PDOException $e) {
             $this->error($e->getMessage());
@@ -63,7 +67,7 @@ class Company extends Common {
     }
 
     /**
-     * 编辑配置页面
+     * 编辑页面
      * @return mixed
      */
     public function edit() {
@@ -81,17 +85,21 @@ class Company extends Common {
     }
 
     /**
-     * 编辑配置操作
+     * 编辑操作
      * @return array|\think\response\Json
      */
     public function editPost() {
 
         $param = input('post.');
         $param["update_time"] = time();
+        $param["is_delete"] = 0;
         $companyService = $this->companyService;
-        !$this->validateName($param["name"]) && $this->error('公司名称值不合法');
-        !$this->validateCode($param["code"]) && $this->error("公司编号值不合法");
-        !$this->validatePhone($param["phone"]) && $this->error("公司电话值不合法");
+        //数据校验
+        $validate = validate("CompanyValidate");
+        if(false === $validate->scene($this->request->action(true))
+                ->check($param)) {
+            $this->error($validate->getError());
+        }
         try{
 
             $result = $companyService->updateByAllowFieldAndId($param,$param["id"]);
@@ -100,7 +108,7 @@ class Company extends Common {
                 $this->error($companyService->getError());
             }
 
-            $this->success("配置成功",url("index"));
+            $this->success("编辑成功",url("index"));
 
         } catch(\PDOException $e) {
             $this->error($e->getMessage());
@@ -133,28 +141,6 @@ class Company extends Common {
             $this->error($e->getMessage());
         }
 
-    }
-
-    private function validateName($name)
-    {
-        return !empty($name);
-    }
-
-    private function validateCode($code)
-    {
-        return !empty($code);
-    }
-
-    private function validatePhone($phone)
-    {
-        preg_match("/^1[3|4|5|7|8][0-9]{9}$/", $phone, $result);
-        return !empty($phone) && !empty($result);
-    }
-
-    private function validateUuid($uuid)
-    {
-        $data = $this->companyService->findByMap(array('uuid' => $uuid));
-        return empty($data);
     }
 
 }
