@@ -2,8 +2,8 @@
 
 namespace app\admin\controller;
 
-use app\admin\model\GoodsClassifyModel;
 use app\admin\service\GoodsClassifyService;
+use app\admin\service\GoodsSpecClassifyService;
 use think\Controller;
 
 use app\admin\service\Admin as adminService;
@@ -20,6 +20,7 @@ class Base extends Controller {
     protected $authRuleService;
     protected $companyService;
     protected $goodsClassifyService;
+    protected $goodsSpecClassifyService;
 
     /**
      * 依赖注入
@@ -28,12 +29,14 @@ class Base extends Controller {
      * @param authGroupService $authGroupService
      * @param authGroupAccessService $authGroupAccessService
      * @param authRuleService $authRuleService
-     * * @param companyService $companyService
      * @param GoodsClassifyService $goodsClassifyService
+     * @param companyService $companyService
+     * @param GoodsSpecClassifyService $goodsSpecClassifyService
      */
     public function __construct( AdminService $adminService, AuthGroupService $authGroupService,
                                 AuthGroupAccessService $authGroupAccessService, AuthRuleService $authRuleService,
-                                 GoodsClassifyService $goodsClassifyService, companyService $companyService){
+                                 GoodsClassifyService $goodsClassifyService, companyService $companyService,
+                                 GoodsSpecClassifyService $goodsSpecClassifyService){
 
         parent::__construct();
 
@@ -43,5 +46,6 @@ class Base extends Controller {
         $this->authRuleService = $authRuleService;
         $this->companyService = $companyService;
         $this->goodsClassifyService = $goodsClassifyService;
+        $this->goodsSpecClassifyService = $goodsSpecClassifyService;
     }
 }

@@ -29,4 +29,30 @@ class GoodsClassifyService extends Base
 
         return object2array($list);
     }
+
+    public function getSubClassifyCount($uuid)
+    {
+        $count = $this->currentModel
+            ->where("parent_uuid", $uuid)
+            ->where("is_delete", DbDataIsDeleteEnum::NO)
+            ->count();
+
+        return $count;
+    }
+
+    public function getAllParentUuid($uuid)
+    {
+        $data = [$uuid];
+        $parentUuid = $this->currentModel->where("uuid", $uuid)->column("parent_uuid");
+        if (empty($parentUuid[0])) {
+            return $data;
+        } else {
+            return array_merge($this->getAllParentUuid($parentUuid[0]), $data);
+        }
+    }
+
+    public function getNameByUuids(array $uuids)
+    {
+        return $this->currentModel->whereIn("uuid", $uuids)->column("name", "uuid");
+    }
 }

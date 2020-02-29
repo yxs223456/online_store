@@ -8,45 +8,13 @@
 
 namespace app\admin\controller;
 
+use app\common\enum\DbDataIsDeleteEnum;
+use app\common\enum\GoodsClassifyIsShowEnum;
 use org\LeftNav;
 use think\Db;
 
 class GoodsClassify extends Common
 {
-    public function convertRequestToWhereSql()
-    {
-
-        $whereSql = " 1=1";
-        $pageMap = [];
-
-        $params = input("param.");
-
-        foreach ($params as $key => $value) {
-
-            if ($value == "-999"
-                || isNullOrEmpty($value))
-                continue;
-
-            switch ($key) {
-
-                case "question":
-                    $whereSql .= " and question LIKE '%" . $value . "%'";
-                    break;
-
-            }
-
-            $pageMap[$key] = $value;
-            $this->assign($key, $value);
-
-        }
-
-        $data["whereSql"] = $whereSql;
-        $data["pageMap"] = $pageMap;
-
-        return $data;
-
-    }
-
     //填空题列表
     public function index()
     {
@@ -124,7 +92,39 @@ class GoodsClassify extends Common
 
         }
 
-        $this->success("菜单分类成功",url("index"));
+        $this->success("编辑成功",url("index"));
+
+    }
+
+    public function delete() {
+
+        $uuid = input('param.uuid');
+
+        $subCount = $this->goodsClassifyService->getSubClassifyCount($uuid);
+
+        if($subCount != 0) {
+            $this->error("请首先删除子分类");
+        }
+
+        try {
+
+            $map["uuid"] = $uuid;
+            $updateData = [
+                "is_delete" => DbDataIsDeleteEnum::YES,
+                "update_time" => time(),
+            ];
+
+            $result = $this->goodsClassifyService->updateByMapAndData($map, $updateData);
+
+            if(false === $result) {
+                $this->error($this->goodsClassifyService->getError());
+            }
+
+            $this->success("分类删除成功", url('index'));
+
+        }catch(\PDOException $e){
+            $this->error($e->getMessage());
+        }
 
     }
 
@@ -132,7 +132,7 @@ class GoodsClassify extends Common
 
         $param = input('post.');
 
-        $goods_classify = Db::name('goods_classify');
+        $goods_classify = Db::name($this->goodsClassifyService->getTableName());
 
         foreach ($param as $id => $weight){
             $goods_classify->where(array('id' => $id ))->setField('weight',$weight);
@@ -148,13 +148,14 @@ class GoodsClassify extends Common
 
         $menu = $this->goodsClassifyService->findById($id);
 
-        if($menu['is_show'] == 1) {
+        if($menu['is_show'] == GoodsClassifyIsShowEnum::YES) {
             $this->error("该分类已是展示状态");
         }
 
         try {
 
-            $result = $this->goodsClassifyService->updateByIdAndData($id,["is_show"=>1]);
+            $result = $this->goodsClassifyService
+                ->updateByIdAndData($id,["is_show"=>GoodsClassifyIsShowEnum::YES,"update_time"=>time()]);
 
             if(false === $result) {
                 $this->error($this->goodsClassifyService->getError());
@@ -174,12 +175,13 @@ class GoodsClassify extends Common
 
         $menu = $this->goodsClassifyService->findById($id);
 
-        if($menu['is_show'] == 0) {
+        if($menu['is_show'] == GoodsClassifyIsShowEnum::NO) {
             $this->error("该分类已是隐藏状态");
         }
 
         try {
-            $result = $this->goodsClassifyService->updateByIdAndData($id,["is_show"=>0]);
+            $result = $this->goodsClassifyService
+                ->updateByIdAndData($id,["is_show"=>GoodsClassifyIsShowEnum::NO,"update_time"=>time()]);
 
             if($result === false) {
                 $this->error($this->goodsClassifyService->getError());
