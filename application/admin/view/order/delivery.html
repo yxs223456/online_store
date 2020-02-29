@@ -3,7 +3,7 @@
 <div class="wrapper wrapper-content animated fadeInRight">
     <div class="ibox float-e-margins">
         <div class="ibox-title">
-            <h5>订单列表</h5>
+            <h5>已发货订单</h5>
         </div>
         <div class="ibox-content">
             <!--搜索框开始-->           
@@ -14,7 +14,7 @@
                         <!--<a href="{:url('add')}"><button class="btn btn-outline btn-primary" type="button">添加公司</button></a>-->
                     <!--</div>-->
                 <!--</div>                                            -->
-                    <form name="admin_list_sea" class="form-search" method="post" action="{:url('index')}">
+                    <form name="admin_list_sea" class="form-search" method="post" action="{:url('delivery')}">
                         <div class="col-sm-3">
                             <div class="input-group">
                                 <input type="text" id="key" class="form-control" name="order_no-like" value="{$order_no|default=''}" placeholder="输入订单号查询" />
@@ -36,9 +36,8 @@
                             <tr class="long-tr">
                                 <th>用户</th>
                                 <th>订单号</th>
-                                <th>状态</th>
-                                <th>支付状态</th>
-                                <th>创建时间</th>
+                                <th>金额</th>
+                                <th>时间</th>
                                 <th>操作</th>
                             </tr>
                         </thead>
@@ -47,23 +46,12 @@
                                 <tr class="long-td">
                                     <td>{$vo["user_name"]}</td>
                                     <td>{$vo["order_no"]}</td>
-                                    <td><?php echo app\admin\model\GoodsOrder::getStatus($vo["status"]) ?></td>
-                                    <td>
-                                        <?php echo app\admin\model\GoodsOrder::getPayStatus($vo['pay_status']) ?>
-                                    </td>
+                                    <td>{$vo["total_money"]}</td>
                                     <td>{$vo["create_time"]|date="Y-m-d H:i:s"}</td>
                                     <td>
-                                        {if condition="$vo['status'] eq 1"}
-                                        <a href="{:url('delivery',['id'=>$vo['id']])}" class="btn btn-primary btn-xs">
-                                            <i class="fa fa-paste"></i>发货
+                                        <a href="{:url('detail',['id'=>$vo['id']])}" class="btn btn-primary btn-xs">
+                                            <i class="fa fa-paste"></i>详情
                                         </a>&nbsp;
-                                        {/if}
-                                        {if ($vo['pay_status'] == 2) }
-                                        <a href="{:url('refund',['id'=>$vo['id']])}" class="btn btn-primary btn-xs">
-                                            <i class="fa fa-paste"></i>退款
-                                        </a>&nbsp;
-                                        {/if}
-
                                     </td>
                                 </tr>
                             {/foreach}

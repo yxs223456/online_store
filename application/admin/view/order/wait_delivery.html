@@ -1,0 +1,75 @@
+{include file="public/header" /}
+<body class="gray-bg">
+<div class="wrapper wrapper-content animated fadeInRight">
+    <div class="ibox float-e-margins">
+        <div class="ibox-title">
+            <h5>待发货订单</h5>
+        </div>
+        <div class="ibox-content">
+            <!--搜索框开始-->           
+            <div class="row">
+                <div class="col-sm-12">   
+                <!--<div  class="col-sm-2" style="width: 100px">-->
+                    <!--<div class="input-group" >-->
+                        <!--<a href="{:url('add')}"><button class="btn btn-outline btn-primary" type="button">添加公司</button></a>-->
+                    <!--</div>-->
+                <!--</div>                                            -->
+                    <form name="admin_list_sea" class="form-search" method="post" action="{:url('waitDelivery')}">
+                        <div class="col-sm-3">
+                            <div class="input-group">
+                                <input type="text" id="key" class="form-control" name="order_no-like" value="{$order_no|default=''}" placeholder="输入订单号查询" />
+                                <span class="input-group-btn"> 
+                                    <button type="submit" class="btn btn-primary"><i class="fa fa-search"></i> 搜索</button> 
+                                </span>
+                            </div>
+                        </div>
+                    </form>                         
+                </div>
+            </div>
+            <!--搜索框结束-->
+            <div class="hr-line-dashed"></div>
+
+            <div class="example-wrap">
+                <div class="example">
+                    <table class="table table-bordered table-hover">
+                        <thead>
+                            <tr class="long-tr">
+                                <th>用户</th>
+                                <th>订单号</th>
+                                <th>金额</th>
+                                <th>时间</th>
+                                <th>操作</th>
+                            </tr>
+                        </thead>
+                        <tbody id="list-content">
+                            {foreach $list as $vo}
+                                <tr class="long-td">
+                                    <td>{$vo["user_name"]}</td>
+                                    <td>{$vo["order_no"]}</td>
+                                    <td>{$vo["total_money"]}</td>
+                                    <td>{$vo["create_time"]|date="Y-m-d H:i:s"}</td>
+                                    <td>
+                                        <a href="{:url('detail',['id'=>$vo['id']])}" class="btn btn-primary btn-xs">
+                                            <i class="fa fa-paste"></i>详情
+                                        </a>&nbsp;
+                                        {if condition="$vo['status'] eq 1"}
+                                        <a href="{:url('editDelivery',['id'=>$vo['id']])}" class="btn btn-primary btn-xs">
+                                            <i class="fa fa-paste"></i>发货
+                                        </a>&nbsp;
+                                        {/if}
+                                    </td>
+                                </tr>
+                            {/foreach}
+                        </tbody>
+                    </table>
+                    {$list->render()}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+
+{include file="public/footer" /}
+</body>
+</html>

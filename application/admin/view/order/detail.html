@@ -1,0 +1,57 @@
+{include file="public/header"/}
+
+<body class="gray-bg">
+<div class="wrapper wrapper-content">
+
+    <!-- 中间折线 -->
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="panel panel-info">
+                <div class="panel-heading">
+                    <i class="fa fa-cogs"></i> 订单信息
+                </div>
+                <div class="panel-body">
+                    <p> 订单编号： {$info.order_no}
+                    </p>
+                    <p> 支付方式： <?php echo app\admin\model\GoodsOrder::getPayType($info["pay_type"]) ?>
+                    </p>
+                    <p> 收货地址：{$info.user_address}
+                    </p>
+                    <p> 联系方式：{$info.user_phone}
+                    </p>
+                    <p> 商品总金额：{$info.goods_money}</p>
+                    <p> 运费：{$info.delivery_money}</p>
+                    <p> 应付总金额：{$info.total_money}</p>
+                    <p> 抵扣金额：{$info.coupon_money}</p>
+                    <p> 实付金额：{$info.real_total_money}</p>
+                    <p> 订单状态： <?php echo app\admin\model\GoodsOrder::getStatus($info["status"]) ?></p>
+                    <p> 支付状态： <?php echo app\admin\model\GoodsOrder::getPayStatus($info["pay_status"]) ?></p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="panel panel-info">
+                <div class="panel-heading">
+                    <i class="fa fa-cogs"></i> 物流信息
+                </div>
+                <div class="panel-body">
+                    <p> 物流公司： {$info.expressCompany.name}
+                    </p>
+                    <p> 物流单号： {$info.express_code}
+                    </p>
+                    <p> 收货时间：{$info.receive_time}
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+{include file="public/footer" /}
+
+</body>
+</html>

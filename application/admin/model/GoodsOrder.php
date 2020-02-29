@@ -16,6 +16,9 @@ class GoodsOrder extends Model {
     const PAY_STATUS_REFUND_PROCESS = 2;//退款中
     const PAY_STATUS_REFUND_DOWN = 3;//退款完成
 
+    const PAY_TYPE_ONLINE = 1;//线上付款
+    const PAY_TYPE_CASH_ON_DELIVERY = 2;//货到付款
+
     public static $statusList = array(
         self::STATUS_SUBMIT => '已提交',
         self::STATUS_WAIT_DELIVERY => '待发货',
@@ -31,6 +34,11 @@ class GoodsOrder extends Model {
         self::PAY_STATUS_REFUND_DOWN => '退款完成',
     );
 
+    public static $payTypeList = array(
+        self::PAY_TYPE_ONLINE => '在线支付',
+        self::PAY_TYPE_CASH_ON_DELIVERY => '货到付款'
+    );
+
     public static function getStatus($status)
     {
         return isset(self::$statusList[$status]) ? self::$statusList[$status] : "";
@@ -38,5 +46,13 @@ class GoodsOrder extends Model {
 
     public static function getPayStatus($status) {
         return isset(self::$payStatusList[$status]) ? self::$payStatusList[$status] : "";
+    }
+
+    public static function getPayType($type) {
+        return isset(self::$payTypeList[$type]) ? self::$payTypeList[$type] : "";
+    }
+
+    public function expressCompany() {
+        return $this->hasOne("ExpressCompany","uuid","express_company_uuid");
     }
 }
