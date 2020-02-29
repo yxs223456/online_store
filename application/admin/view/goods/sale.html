@@ -1,0 +1,126 @@
+{include file="public/header" /}
+<body class="gray-bg">
+<div class="wrapper wrapper-content animated fadeInRight">
+    <div class="ibox float-e-margins">
+        <div class="ibox-title">
+            <h5>已上架商品</h5>
+        </div>
+        <div class="ibox-content">
+            <!--搜索框开始-->           
+            <div class="row">
+                <div class="col-sm-12">   
+                <!--<div  class="col-sm-2" style="width: 100px">-->
+                    <!--<div class="input-group" >-->
+                        <!--<a href="{:url('add')}"><button class="btn btn-outline btn-primary" type="button">添加公司</button></a>-->
+                    <!--</div>-->
+                <!--</div>                                            -->
+                    <form name="admin_list_sea" class="form-search" method="post" action="{:url('sale')}">
+                        <div class="col-sm-3">
+                            <div class="input-group">
+                                <input type="text" id="key" class="form-control" name="goods_no-like" value="{$goods_no|default=''}" placeholder="输入商品编号查询" />
+                                <span class="input-group-btn"> 
+                                    <button type="submit" class="btn btn-primary"><i class="fa fa-search"></i> 搜索</button> 
+                                </span>
+                            </div>
+                        </div>
+                    </form>                         
+                </div>
+            </div>
+            <!--搜索框结束-->
+            <div class="hr-line-dashed"></div>
+
+            <div class="example-wrap">
+                <div class="example">
+                    <table class="table table-bordered table-hover">
+                        <thead>
+                            <tr class="long-tr">
+                                <th>商品名称</th>
+                                <th>商品编号</th>
+                                <th>价格</th>
+                                <th>推荐</th>
+                                <th>精品</th>
+                                <th>新品</th>
+                                <th>热销</th>
+                                <th>销量</th>
+                                <th>库存</th>
+                                <th>操作</th>
+                            </tr>
+                        </thead>
+                        <tbody id="list-content">
+                            {foreach $list as $vo}
+                                <tr class="long-td">
+                                    <td>{$vo["goods_name"]}</td>
+                                    <td>{$vo["goods_no"]}</td>
+                                    <td>{$vo["market_price"]}</td>
+                                    <td>
+                                        {if condition="$vo.is_recommend eq 1"}
+                                        <a class="red" href="{:url('unRecommend',['id' => $vo['id']])}">
+                                            <div>✅</div>
+                                        </a>
+                                        {else/}
+                                        <a class="red" href="{:url('recommend',['id' => $vo['id']])}">
+                                            <div>❌</div>
+                                        </a>
+                                        {/if}
+                                    </td>
+                                    <td>
+                                        {if condition="$vo.is_best eq 1"}
+                                        <a class="red" href="{:url('unBest',['id' => $vo['id']])}">
+                                            <div>✅</div>
+                                        </a>
+                                        {else/}
+                                        <a class="red" href="{:url('best',['id' => $vo['id']])}">
+                                            <div>❌</div>
+                                        </a>
+                                        {/if}
+                                    </td>
+                                    <td>
+                                        {if condition="$vo.is_new eq 1"}
+                                        <a class="red" href="{:url('unNew',['id' => $vo['id']])}">
+                                            <div>✅</div>
+                                        </a>
+                                        {else/}
+                                        <a class="red" href="{:url('isNew',['id' => $vo['id']])}">
+                                            <div>❌</div>
+                                        </a>
+                                        {/if}
+                                    </td>
+                                    <td>
+                                        {if condition="$vo.is_hot eq 1"}
+                                        <a class="red" href="{:url('unHot',['id' => $vo['id']])}">
+                                            <div>✅</div>
+                                        </a>
+                                        {else/}
+                                        <a class="red" href="{:url('hot',['id' => $vo['id']])}">
+                                            <div>❌</div>
+                                        </a>
+                                        {/if}
+                                    </td>
+                                    <td>{$vo["sale_num"]}</td>
+                                    <td>{$vo["stock"]}</td>
+                                    <td>
+                                        <a href="{:url('detail',['id'=>$vo['id']])}" class="btn btn-primary btn-xs">
+                                            <i class="fa fa-paste"></i>查看
+                                        </a>&nbsp;
+                                        <a href="{:url('edit',['id'=>$vo['id']])}" class="btn btn-primary btn-xs">
+                                            <i class="fa fa-paste"></i>编辑
+                                        </a>&nbsp;
+                                        <a href="{:url('delete',['id'=>$vo['id']])}" class="btn btn-primary btn-xs">
+                                            <i class="fa fa-paste"></i>删除
+                                        </a>&nbsp;
+                                    </td>
+                                </tr>
+                            {/foreach}
+                        </tbody>
+                    </table>
+                    {$list->render()}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+
+{include file="public/footer" /}
+</body>
+</html>
