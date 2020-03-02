@@ -198,26 +198,25 @@ class Upload extends Common {
     public function uploadEditorToOss() {
 
         $tempFile = $_FILES['upfile']['tmp_name'];
+        $ext = strtolower(pathinfo($_FILES['upfile']['name'])["extension"]);
 
-        $fileName = md5(uniqid(mt_rand(), true)).".".strtolower(pathinfo($_FILES['upfile']['name'])["extension"]);
+        $fileName = "online_store/baidu/" . md5(uniqid(mt_rand(), true)).".".$ext;
 
-        $info = AliOss::uploadFile($tempFile,$fileName);
-
-        $url = $info['info']['url'];
-        $start = strrpos($url,"/");
-        $imgName = substr($url, $start);
+        $url = AliyunOss::putObject($fileName, file_get_contents($tempFile));
 
         $returnData = array(
             "state" => "SUCCESS",
-            "url" => config('oss.Cname').$imgName,
+            "url" => $url,
             "title" => "",
             "original" => "",
-            "type" => ".png",
+            "type" => ".".$ext,
             "size" => ''
         );
 
         return json($returnData);
 
     }
+
+
 
 }

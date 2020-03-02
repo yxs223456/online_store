@@ -2,6 +2,7 @@
 
 namespace app\admin\controller;
 
+use app\admin\service\GoodsBrandService;
 use app\admin\service\GoodsClassifyService;
 use app\admin\service\GoodsService;
 use app\admin\service\GoodsSpecClassifyService;
@@ -24,11 +25,13 @@ class Base extends Controller {
     protected $authRuleService;
     protected $companyService;
     protected $orderService;
+    protected $goodsBrandService;
     protected $goodsClassifyService;
     protected $goodsSpecClassifyService;
     protected $goodsService;
-    protected $userService;
     protected $userLevelService;
+    protected $userService;
+
 
     /**
      * 依赖注入
@@ -41,6 +44,7 @@ class Base extends Controller {
      * @param orderService $orderService
      * @param UserBaseService $userBaseService
      * @param UserLevelService $userLevelService
+     * @param GoodsBrandService $goodsBrandService
      * @param GoodsSpecClassifyService $goodsSpecClassifyService
      * @param GoodsClassifyService $goodsClassifyService
      * @param goodsService $goodsService
@@ -48,7 +52,7 @@ class Base extends Controller {
     public function __construct( AdminService $adminService, AuthGroupService $authGroupService,
                                  AuthGroupAccessService $authGroupAccessService, AuthRuleService $authRuleService,
                                  companyService $companyService, orderService $orderService,UserBaseService $userBaseService,
-                                 UserLevelService $userLevelService,
+                                 UserLevelService $userLevelService, GoodsBrandService $goodsBrandService,
                                  GoodsSpecClassifyService $goodsSpecClassifyService, GoodsClassifyService $goodsClassifyService,
                                  GoodsService $goodsService) {
 
@@ -59,11 +63,13 @@ class Base extends Controller {
         $this->authGroupAccessService = $authGroupAccessService;
         $this->authRuleService = $authRuleService;
         $this->companyService = $companyService;
-        $this->orderService = $orderService;
+        $this->goodsBrandService = $goodsBrandService;
         $this->goodsClassifyService = $goodsClassifyService;
         $this->goodsSpecClassifyService = $goodsSpecClassifyService;
         $this->goodsService = $goodsService;
-        $this->userService = $userBaseService;
+        $this->orderService = $orderService;
         $this->userLevelService = $userLevelService;
+        $this->userService = $userBaseService;
+
     }
 }
