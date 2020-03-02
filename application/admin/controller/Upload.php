@@ -2,9 +2,38 @@
 
 namespace app\admin\controller;
 
-use taobao\AliOss;
+use app\common\helper\AliyunOss;
 
 class Upload extends Common {
+
+    public function uploadImage()
+    {
+        $tempFile = $_FILES['file']['tmp_name'];
+
+        $image = \think\Image::open($tempFile);
+
+        // 返回图片的宽度
+        $width = $image->width();
+        // 返回图片的高度
+        $height = $image->height();
+
+        $ext = $image->type();
+
+//        if ($width != 1500 || $height != 768) {
+//            $returnData['code'] = -1;
+//            $returnData['msg'] = '图片宽高错误';
+//            return json($returnData);
+//        }
+
+        $fileName = 'online_store/' . md5(uniqid(mt_rand(), true)).".".$ext;
+
+        $url = AliyunOss::putObject($fileName, file_get_contents($tempFile));
+
+        $returnData['code'] = 200;
+        $returnData['msg'] = '上传成功';
+        $returnData['data']['url'] = $url;
+        return json_encode($returnData);
+    }
 
 	//图片上传
     public function upload() {

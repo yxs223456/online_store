@@ -15,4 +15,12 @@ return [
         'timeout' => 0,
     ],
 
+    "oss" => [
+        "key_id" => "LTAI4FoyPo1yvy9G5XqeKjxj",
+        "Key_secret" => "FIVRahJfaYbXHNRbbqxUnX4ZMHqUnK",
+        "endpoint" => "oss-cn-beijing.aliyuncs.com",
+        "host" => "https://yxs191202.oss-cn-beijing.aliyuncs.com",
+        "bucket" => "yxs191202"
+    ],
+
 ];

@@ -194,7 +194,7 @@ class GoodsSpecClassify extends Common
                 $this->error($this->goodsSpecClassifyService->getError());
             }
 
-            $this->success("分类规格成功", url('index'));
+            $this->success("删除成功", url('index'));
 
         }catch(\PDOException $e){
             $this->error($e->getMessage());

@@ -5,6 +5,8 @@ namespace app\admin\controller;
 use app\admin\service\GoodsClassifyService;
 use app\admin\service\GoodsService;
 use app\admin\service\GoodsSpecClassifyService;
+use app\admin\service\UserBaseService;
+use app\admin\service\UserLevelService;
 use think\Controller;
 
 use app\admin\service\Admin as adminService;
@@ -25,6 +27,8 @@ class Base extends Controller {
     protected $goodsClassifyService;
     protected $goodsSpecClassifyService;
     protected $goodsService;
+    protected $userService;
+    protected $userLevelService;
 
     /**
      * 依赖注入
@@ -33,15 +37,18 @@ class Base extends Controller {
      * @param authGroupService $authGroupService
      * @param authGroupAccessService $authGroupAccessService
      * @param authRuleService $authRuleService
-     * @param GoodsClassifyService $goodsClassifyService
-     * @param GoodsSpecClassifyService $goodsSpecClassifyService
      * @param companyService $companyService
      * @param orderService $orderService
+     * @param UserBaseService $userBaseService
+     * @param UserLevelService $userLevelService
+     * @param GoodsSpecClassifyService $goodsSpecClassifyService
+     * @param GoodsClassifyService $goodsClassifyService
      * @param goodsService $goodsService
      */
     public function __construct( AdminService $adminService, AuthGroupService $authGroupService,
                                  AuthGroupAccessService $authGroupAccessService, AuthRuleService $authRuleService,
-                                 companyService $companyService, orderService $orderService,
+                                 companyService $companyService, orderService $orderService,UserBaseService $userBaseService,
+                                 UserLevelService $userLevelService,
                                  GoodsSpecClassifyService $goodsSpecClassifyService, GoodsClassifyService $goodsClassifyService,
                                  GoodsService $goodsService) {
 
@@ -56,5 +63,7 @@ class Base extends Controller {
         $this->goodsClassifyService = $goodsClassifyService;
         $this->goodsSpecClassifyService = $goodsSpecClassifyService;
         $this->goodsService = $goodsService;
+        $this->userService = $userBaseService;
+        $this->userLevelService = $userLevelService;
     }
 }

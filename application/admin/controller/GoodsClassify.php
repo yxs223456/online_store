@@ -77,6 +77,7 @@ class GoodsClassify extends Common
 
         $param = input('post.');
 
+        $param["update_time"] = time();
         Db::startTrans();
         try {
 
