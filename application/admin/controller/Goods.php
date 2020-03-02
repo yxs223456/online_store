@@ -3,6 +3,9 @@
 namespace app\admin\controller;
 
 
+use app\admin\model\GoodsClassifyModel;
+use org\LeftNav;
+
 class Goods extends Common {
 
     const LENGTH = 16;
@@ -46,7 +49,6 @@ class Goods extends Common {
 
         $goodsService = $this->goodsService;
 
-
         $result = $goodsService->findById($id);
         if (false === $result) {
             $this->error($goodsService->getError());
@@ -60,7 +62,10 @@ class Goods extends Common {
      * 添加页面
      * @return mixed
      */
-    public function add() {
+    public function add()
+    {
+        $list = $this->goodsClassifyService->getAllByParent("");
+        $this->assign('list', $list);
         return $this->fetch();
     }
 
@@ -72,25 +77,59 @@ class Goods extends Common {
 
         $param = input('post.');
         $param["uuid"] = $this->companyService->getUuid(self::LENGTH);
+        $classfly = array_filter($param["goods_classify"]);
+        isset($param["is_best"]) && $param["is_best"] = 1;
+        isset($param["is_recommend"]) && $param["is_recommend"] = 1;
+        isset($param["is_hot"]) && $param["is_hot"] = 1;
+        isset($param["is_new"]) && $param["is_new"] = 1;
         $param["create_time"] = time();
         $param["update_time"] = time();
-        $companyService = $this->companyService;
+        $param["goods_classify_path"] = implode("_",$classfly);
+        $param["first_goods_classify"] = array_shift($classfly);
+        $param["last_goods_classify"] = array_pop($classfly);
+        $param["gallery"] = "";
+        $goodsService = $this->goodsService;
 
+//        var_dump($param);exit;
+        //数据校验
+        $validate = validate("GoodsValidate");
+        if(false === $validate->scene($this->request->action(true))
+                ->check($param)) {
+            $this->error($validate->getError());
+        }
 
         try {
 
-            $result = $companyService->saveByAllowField($param);
+            $result = $goodsService->saveByAllowField($param);
 
             if($result === false){
-                $this->error($companyService->getError());
+                $this->error($goodsService->getError());
             }
 
-            $this->success("添加成功",url("index"));
+            $this->success("添加成功",url("sale"));
 
         } catch(\PDOException $e) {
             $this->error($e->getMessage());
         }
 
+    }
+
+    /**
+     * 添加页面
+     * @return mixed
+     */
+    public function getCat() {
+
+        $param = input('post.');
+        $list = $this->goodsClassifyService->getAllByParent($param["uuid"]);
+
+        if (empty($list)) {
+            return $this->fetch("get_cat_no");
+        }
+
+        $this->assign('list',$list);
+        $this->assign('index',$param["index"]);
+        return $this->fetch();
     }
 
     /**

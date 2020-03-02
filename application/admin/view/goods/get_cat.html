@@ -1,0 +1,6 @@
+<select class="form-control m-b chosen-select change-select" name="goods_classify[]">
+    <option value="" selected>==请选择==</option>
+    {foreach $list as $vo}
+    <option value="{$vo.uuid}">{$vo.name}</option>
+    {/foreach}
+</select>

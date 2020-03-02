@@ -55,4 +55,10 @@ class GoodsClassifyService extends Base
     {
         return $this->currentModel->whereIn("uuid", $uuids)->column("name", "uuid");
     }
+
+    public function getAllByParent($parent)
+    {
+        return $this->currentModel->where("parent_uuid", $parent)
+            ->where("is_delete", 0)->all()->toArray();
+    }
 }
