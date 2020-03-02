@@ -2,9 +2,38 @@
 
 namespace app\admin\controller;
 
-use taobao\AliOss;
+use app\common\helper\AliyunOss;
 
 class Upload extends Common {
+
+    public function uploadImage()
+    {
+        $tempFile = $_FILES['file']['tmp_name'];
+
+        $image = \think\Image::open($tempFile);
+
+        // 返回图片的宽度
+        $width = $image->width();
+        // 返回图片的高度
+        $height = $image->height();
+
+        $ext = $image->type();
+
+//        if ($width != 1500 || $height != 768) {
+//            $returnData['code'] = -1;
+//            $returnData['msg'] = '图片宽高错误';
+//            return json($returnData);
+//        }
+
+        $fileName = 'online_store/' . md5(uniqid(mt_rand(), true)).".".$ext;
+
+        $url = AliyunOss::putObject($fileName, file_get_contents($tempFile));
+
+        $returnData['code'] = 200;
+        $returnData['msg'] = '上传成功';
+        $returnData['data']['url'] = $url;
+        return json_encode($returnData);
+    }
 
 	//图片上传
     public function upload() {
@@ -169,26 +198,25 @@ class Upload extends Common {
     public function uploadEditorToOss() {
 
         $tempFile = $_FILES['upfile']['tmp_name'];
+        $ext = strtolower(pathinfo($_FILES['upfile']['name'])["extension"]);
 
-        $fileName = md5(uniqid(mt_rand(), true)).".".strtolower(pathinfo($_FILES['upfile']['name'])["extension"]);
+        $fileName = "online_store/baidu/" . md5(uniqid(mt_rand(), true)).".".$ext;
 
-        $info = AliOss::uploadFile($tempFile,$fileName);
-
-        $url = $info['info']['url'];
-        $start = strrpos($url,"/");
-        $imgName = substr($url, $start);
+        $url = AliyunOss::putObject($fileName, file_get_contents($tempFile));
 
         $returnData = array(
             "state" => "SUCCESS",
-            "url" => config('oss.Cname').$imgName,
+            "url" => $url,
             "title" => "",
             "original" => "",
-            "type" => ".png",
+            "type" => ".".$ext,
             "size" => ''
         );
 
         return json($returnData);
 
     }
+
+
 
 }
