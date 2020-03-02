@@ -25,7 +25,8 @@
         "aliyuncs/oss-sdk-php": "^2.3",
       "ext-json": "*",
       "ext-bcmath": "*",
-        "naixiaoxin/think-wechat": "^1.4"
+        "naixiaoxin/think-wechat": "^1.4",
+      "ext-pdo": "*"
     },
     "autoload": {
         "psr-4": {
