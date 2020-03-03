@@ -1,6 +1,10 @@
 <select class="form-control m-b chosen-select change-select" name="goods_classify[]">
-    <option value="" selected>==请选择==</option>
+    <option value="">==请选择==</option>
     {foreach $list as $vo}
-    <option value="{$vo.uuid}">{$vo.name}</option>
+    <?php if(isset($current_uuid) && $vo["uuid"] == $current_uuid) {?>
+    <option value="{$vo.uuid}" selected>{$vo.name}</option>
+    <?php } else { ?>
+    <option value="{$vo.uuid}" >{$vo.name}</option>
+    <?php }?>
     {/foreach}
 </select>

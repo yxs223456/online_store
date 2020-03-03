@@ -51,6 +51,9 @@ class GoodsValidate extends Validate
     protected $scene = [
         'addPost' => ["uuid", "goods_no", "product_no", "goods_name", "market_price", "shop_price",
             "stock", "goods_unit", "goods_classify_path", "first_goods_classify", "last_goods_classify",
+            "description"],
+        'editPost' => ["market_price", "shop_price",
+            "stock", "goods_unit", "goods_classify_path", "first_goods_classify", "last_goods_classify",
             "description"]
     ];
 }
