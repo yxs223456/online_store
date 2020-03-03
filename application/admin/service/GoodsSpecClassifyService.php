@@ -41,4 +41,19 @@ class GoodsSpecClassifyService extends Base
 
         return $list;
     }
+
+    public function getClassifyByClassifyUuids(array $uuids)
+    {
+        return $this->currentModel
+            ->where("is_delete",DbDataIsDeleteEnum::NO)
+            ->whereIn("goods_classify_uuid", $uuids)->all()->toArray();
+    }
+
+    public function getNameByUuids(array $uuids)
+    {
+        return $this->currentModel
+            ->where("is_delete", DbDataIsDeleteEnum::NO)
+            ->whereIn("uuid", $uuids)
+            ->column("name", "uuid");
+    }
 }

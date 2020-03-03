@@ -1,0 +1,29 @@
+<table class="table table-bordered table-hover">
+    <tr>
+        <th>推荐规格</th>
+        <?php foreach($classify as $value): ?>
+        <th>{$value}</th>
+        <?php endforeach; ?>
+        <th>货号</th>
+        <th>市场价</th>
+        <th>本店价</th>
+        <th>库存</th>
+        <th>销量</th>
+    </tr>
+    <?php foreach($sale as $key => $item) : ?>
+    <tr>
+        <td>
+            <input name="is_default[]" type="radio" value="{$itemUuids[$key]}">
+            <input type="hidden" name="goods_spec_item_uuids[]" value="{$itemUuids[$key]}"/>
+        </td>
+        <?php foreach($item as $i): ?>
+        <td>{$i}</td>
+        <?php endforeach; ?>
+        <td><input type="text" name="product_no[]" value="{$productNo}_{$key+1}"></td>
+        <td><input type="text" name="market_price[]" value=""></td>
+        <td><input type="text" name="shop_price[]" value=""></td>
+        <td><input type="text" name="stock[]" value=""></td>
+        <td><input type="text" name="sale_num[]" disabled value="0"></td>
+    </tr>
+    <?php endforeach; ?>
+</table>

@@ -231,18 +231,175 @@ class Goods extends Common {
         if(empty($info)) {
             $this->error("该商品不存在");
         }
-        $cateArr = explode("_",$info["goods_classify_path"]);
-        $category = [];
-        $list = $this->goodsClassifyService->getAllByParent("");
-        $category[] = $list;
-        foreach ($cateArr as $value) {
-            $list = $this->goodsClassifyService->getAllByParent($value);
-            !empty($list) && $category[] = $list;
-        }
+        $classifyUuids = explode("_",$info["goods_classify_path"]);
+        $spec = $this->goodsSpecClassifyService->getClassifyByClassifyUuids($classifyUuids);
+        $classify = $this->goodsService->getClassifyData($classifyUuids, $spec);
+        $classifyItem = $this->goodsSpecItemService->getItemByGoodsUuid($info["uuid"]);
+
+        $this->assign("classify",$classify);
+        $this->assign("classifyItem",$classifyItem);
 
         $this->assign('info', $info);
-        $this->assign('category', $category);
-        $this->assign('cateArr', $cateArr);
+        return $this->fetch();
+    }
+
+    /**
+     * 编辑页面
+     * @return mixed
+     */
+    public function editSpecPost()
+    {
+        $param = input('post.');
+
+        $param["uuid"] = $this->companyService->getUuid(self::LENGTH);
+        $param['create_time'] = time();
+        $param['update_time'] = time();
+        $param['is_delete'] = 0;
+        $param['shop_uuid'] = "88888888";
+
+        $rules = [
+            'uuid' => 'require|unique:goods_spec_item',
+            'name' => 'require|unique:goods_spec_item,goods_uuid^goods_spec_classify^name^is_delete'
+        ];
+
+        $msg = [
+            'uuid.unique' => 'uuid重复,请再次提交',
+            'name.require' => '规格不能为空',
+            'name.unique' => '规格已存在',
+        ];
+
+        if (isset($param["image_url"])) {
+            $rules["image_url"] = 'require';
+            $msg["image_url.require"] = "请上传图片";
+        }
+
+        $validate   = Validate::make($rules,$msg);
+        $result = $validate->check($param);
+
+        if(!$result) {
+            $this->error($validate->getError());
+        }
+        try {
+            $goodsService = $this->goodsSpecItemService;
+            $result = $goodsService->saveByAllowField($param);
+
+            if ($result === false) {
+                $this->error($goodsService->getError());
+            }
+
+        } catch (\Exception $e) {
+            $this->error($e->getMessage());
+        }
+        $this->success("添加成功");
+    }
+
+    /**
+     * 编辑销售规格页面
+     * @return mixed
+     */
+    public function editSale()
+    {
+        $id = input('param.id');
+
+        $info = $this->goodsService->findById($id);
+        if(empty($info)) {
+            $this->error("该商品不存在");
+        }
+        // 获取商品分类
+        $classifyUuids = explode("_",$info["goods_classify_path"]);
+        // 根据商品分类获取规格分类
+        $spec = $this->goodsSpecClassifyService->getClassifyByClassifyUuids($classifyUuids);
+        // 获取规格分类符合要求的规格
+        $classify = $this->goodsService->getClassifyData($classifyUuids, $spec);
+        // 获取规格item
+        $classifyItem = $this->goodsSpecItemService->getItemByGoodsUuid($info["uuid"]);
+
+        //判断是否使用checkbox数组
+        $goodsSpecUsed = $this->goodsSpecService->getSpecUsedItemUuids($info["uuid"]);
+
+        // 获取table数据
+        $orglist = $this->goodsSpecService->findByGoodsUuid($info["uuid"]);
+        $list = $this->goodsSpecService->formatList($orglist,
+            array_combine(array_column($classifyItem,'uuid'),array_column($classifyItem,'name')));
+
+        // 获取table表头
+        $specItemUuids = explode("_",array_pop($orglist)["goods_spec_item_uuids"]);
+        $specClassifyUuids = $this->goodsSpecItemService->getClassifyUuid($specItemUuids);
+        $classifyTitle = $this->goodsSpecClassifyService->getNameByUuids($specClassifyUuids);
+
+
+        $this->assign("classify",$classify);
+        $this->assign("classifyItem",$classifyItem);
+        $this->assign("goodsSpecUsed",$goodsSpecUsed);
+        $this->assign("classifyTitle",$classifyTitle);
+        $this->assign("list",$list);
+
+        $this->assign('info', $info);
+        return $this->fetch();
+    }
+
+    /**
+     * 编辑销售规格页面
+     * @return mixed
+     */
+    public function editSalePost()
+    {
+        $param = input('post.');
+
+        $goodsUuid = $param["goods_uuid"];
+        $goods = $this->goodsService->findByUuid($goodsUuid);
+        if(empty($goods)) {
+            $this->error("该商品不存在");
+        }
+
+        $goodsSpecService = $this->goodsSpecService;
+        $insertData = $goodsSpecService->getInsertData($param, $goods);
+
+        Db::startTrans();
+        try {
+
+            // 删除之前的
+            $result = $goodsSpecService->deleteByUuid($goodsUuid);
+
+            if ($result === false) {
+                throw new Exception("操作失败");
+            }
+
+            // 添加新的
+            $result = $goodsSpecService->insertMany($insertData);
+
+            if ($result === false) {
+                throw new Exception("操作失败");
+            }
+
+            Db::commit();
+        } catch (\Exception $e) {
+            Db::rollback();
+            $this->error($e->getMessage());
+        }
+        $this->success("编辑成功");
+    }
+
+    /**
+     * 编辑销售规格页面
+     * @return mixed
+     */
+    public function getSaleForm() {
+
+        $param = input('post.');
+
+        $data = $this->goodsService->getSaleForm($param["item"]);
+        $sale = $data["sale"];
+        $uuids = $data["goodsClassify"];
+        $classify = $this->goodsSpecClassifyService->getNameByUuids($uuids);
+
+        $productNo = $this->goodsService->getUuid(10);
+
+        $this->assign('sale',array_values($sale));
+        $this->assign('itemUuids',array_keys($sale));
+        $this->assign('classify',$classify);
+        $this->assign('productNo',$productNo);
+
         return $this->fetch();
     }
 
