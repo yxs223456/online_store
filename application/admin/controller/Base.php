@@ -2,8 +2,10 @@
 
 namespace app\admin\controller;
 
+use app\admin\service\GoodsAppraiseService;
 use app\admin\service\GoodsBrandService;
 use app\admin\service\GoodsClassifyService;
+use app\admin\service\GoodsScoreService;
 use app\admin\service\GoodsService;
 use app\admin\service\GoodsSpecClassifyService;
 use app\admin\service\UserBaseService;
@@ -25,8 +27,10 @@ class Base extends Controller {
     protected $authRuleService;
     protected $companyService;
     protected $orderService;
+    protected $goodsAppraiseService;
     protected $goodsBrandService;
     protected $goodsClassifyService;
+    protected $goodsScoreService;
     protected $goodsSpecClassifyService;
     protected $goodsService;
     protected $userLevelService;
@@ -44,7 +48,9 @@ class Base extends Controller {
      * @param orderService $orderService
      * @param UserBaseService $userBaseService
      * @param UserLevelService $userLevelService
+     * @param GoodsAppraiseService $goodsAppraiseService
      * @param GoodsBrandService $goodsBrandService
+     * @param GoodsScoreService $goodsScoreService
      * @param GoodsSpecClassifyService $goodsSpecClassifyService
      * @param GoodsClassifyService $goodsClassifyService
      * @param goodsService $goodsService
@@ -52,7 +58,8 @@ class Base extends Controller {
     public function __construct( AdminService $adminService, AuthGroupService $authGroupService,
                                  AuthGroupAccessService $authGroupAccessService, AuthRuleService $authRuleService,
                                  companyService $companyService, orderService $orderService,UserBaseService $userBaseService,
-                                 UserLevelService $userLevelService, GoodsBrandService $goodsBrandService,
+                                 UserLevelService $userLevelService, GoodsAppraiseService $goodsAppraiseService,
+                                 GoodsBrandService $goodsBrandService, GoodsScoreService $goodsScoreService,
                                  GoodsSpecClassifyService $goodsSpecClassifyService, GoodsClassifyService $goodsClassifyService,
                                  GoodsService $goodsService) {
 
@@ -63,6 +70,7 @@ class Base extends Controller {
         $this->authGroupAccessService = $authGroupAccessService;
         $this->authRuleService = $authRuleService;
         $this->companyService = $companyService;
+        $this->goodsAppraiseService = $goodsAppraiseService;
         $this->goodsBrandService = $goodsBrandService;
         $this->goodsClassifyService = $goodsClassifyService;
         $this->goodsSpecClassifyService = $goodsSpecClassifyService;
@@ -70,6 +78,7 @@ class Base extends Controller {
         $this->orderService = $orderService;
         $this->userLevelService = $userLevelService;
         $this->userService = $userBaseService;
+        $this->goodsScoreService = $goodsScoreService;
 
     }
 }

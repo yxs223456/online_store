@@ -147,9 +147,9 @@ class GoodsClassify extends Common
 
         $id = input('param.id');
 
-        $menu = $this->goodsClassifyService->findById($id);
+        $goodsClassify = $this->goodsClassifyService->findById($id);
 
-        if($menu['is_show'] == GoodsClassifyIsShowEnum::YES) {
+        if($goodsClassify['is_show'] == GoodsClassifyIsShowEnum::YES) {
             $this->error("该分类已是展示状态");
         }
 
@@ -174,9 +174,9 @@ class GoodsClassify extends Common
 
         $id = input('param.id');
 
-        $menu = $this->goodsClassifyService->findById($id);
+        $goodsClassify = $this->goodsClassifyService->findById($id);
 
-        if($menu['is_show'] == GoodsClassifyIsShowEnum::NO) {
+        if($goodsClassify['is_show'] == GoodsClassifyIsShowEnum::NO) {
             $this->error("该分类已是隐藏状态");
         }
 
