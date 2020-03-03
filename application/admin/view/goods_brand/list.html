@@ -1,8 +1,4 @@
 {include file="public/header" /}
-<!-- 配置文件 -->
-<script type="text/javascript" src="/static/admin/ueditor/ueditor.config.js"></script>
-<!-- 编辑器源码文件 -->
-<script type="text/javascript" src="/static/admin/ueditor/ueditor.all.js"></script>
 <style type="text/css">
     /*强制table不换行*/
     table td{word-break: keep-all;white-space:nowrap;}
@@ -50,7 +46,7 @@
                             <tr class="long-tr">
                                 <th>品牌图片</th>
                                 <th>品牌名称</th>
-                                <th>是否显示</th>
+                                <th>状态</th>
                                 <th>操作</th>
                             </tr>
                             </thead>
@@ -62,11 +58,11 @@
                                 <td>
                                     {if condition="$vo.status eq 1"}
                                     <a class="red" href="{:url('deactivate',['id' => $vo['id']])}">
-                                        <div><span class="label label-info">正常</span></div>
+                                        <div><span class="label label-info">正常使用</span></div>
                                     </a>
                                     {else/}
                                     <a class="red" href="{:url('activate',['id' => $vo['id']])}">
-                                        <div><span class="label label-danger">禁用</span></div>
+                                        <div><span class="label label-danger">禁用使用</span></div>
                                     </a>
                                     {/if}
                                 </td>
@@ -95,62 +91,6 @@
 
 <script type="text/javascript" src="/static/admin/js/laypage.js"></script>
 <script type="text/javascript">
-    $(function(){
-        $('#formSubmit').click(function() {
-
-            if(common.isNullOrEmpty($('#name').val())){
-                layer.msg('请输入品牌',{icon:2,time:1500,shade: 0.1}, function(index){
-                    layer.close(index);
-                });
-                return false;
-            }
-
-            if (common.isNullOrEmpty($('#image_url').val())) {
-                layer.msg('请上传品牌图片',{icon:2,time:1500,shade: 0.1}, function(index){
-                    layer.close(index);
-                });
-                return false;
-            }
-
-
-            $("form#add").submit();
-
-        });
-
-    });
-
-    var config = {
-        '.chosen-select': {}
-    };
-    for (var selector in config) {
-        $(selector).chosen(config[selector]);
-    }
-
-
-    function uploadImage(img, formInput, fileInput) {
-        $.ajaxFileUpload({
-            url: "/admin/upload/uploadImage", //用于文件上传的服务器端请求地址
-            secureuri: false, //是否需要安全协议，一般设置为false
-            fileElementId: fileInput, //文件上传域的ID
-            dataType: 'json', //返回值类型 一般设置为json
-            data: "{}",
-            success: function (data, status)  //服务器成功响应处理函数
-            {
-                console.log(data);
-                if (data['code'] != 200) {
-                    layer.msg(data['msg']);
-                    return false;
-                }
-                $("#" + img).attr("src", data['data']['url']);
-                $("#" + formInput).val(data['data']['url']);
-                console.log(data['data']['url'])
-            },
-            error: function (data, status, e)//服务器响应失败处理函数
-            {
-                console.log(e);
-            }
-        })
-    }
 
     layer.photos({
         photos: '.layer-photos-demo'
@@ -178,20 +118,6 @@
         });
     });
 
-    var editor = new UE.ui.Editor();
-    editor.render("myEditor");
-    // 在渲染 ueditor 的时候, 将 ueditor 交给一个全局变量
-    var ue = UE.getEditor('myEditor');
-
-    // 重写百度富文本编辑器监听上传图片事件
-    UE.Editor.prototype._bkGetActionUrl = UE.Editor.prototype.getActionUrl;
-    UE.Editor.prototype.getActionUrl = function(action) {
-        if (action == 'uploadimage') {
-            return '/admin/upload/uploadEditorToOss';
-        } else {
-            return this._bkGetActionUrl.call(this, action);
-        }
-    };
 </script>
 
 </body>
