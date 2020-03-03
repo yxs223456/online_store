@@ -1,0 +1,209 @@
+{include file="public/header" /}
+<style type="text/css">
+    /*强制table不换行*/
+    table td{word-break: keep-all;white-space:nowrap;}
+    table th{word-break: keep-all;white-space:nowrap;}
+    .tableWordVreakNone{
+        white-space: normal !important;word-break: normal !important;
+    }
+</style>
+<body class="gray-bg">
+<div class="wrapper wrapper-content animated fadeInRight">
+    <!-- Panel Other -->
+    <div class="ibox float-e-margins">
+        <div class="ibox-title">
+            <h5>评论列表</h5>
+        </div>
+        <div class="ibox-content">
+            <!--搜索框开始-->
+            <div class="row">
+                <div class="col-sm-12">
+                    <form method="post" action="{:url('index')}" id="searchForm" class="form-inline">
+                        <select name="goods_score" class="form-control">
+                            <option value="">商品评分</option>
+                            <option value="1" {$goods_score=== 1 ?'selected' : ''}>1星</option>
+                            <option value="2" {$goods_score=== 2 ?'selected' : ''}>2星</option>
+                            <option value="3" {$goods_score=== 3 ?'selected' : ''}>3星</option>
+                            <option value="4" {$goods_score=== 4 ?'selected' : ''}>4星</option>
+                            <option value="5" {$goods_score=== 5 ?'selected' : ''}>5星</option>
+                        </select>
+
+                        <button class="btn btn-success btn-sm" type="submit" style="margin-bottom:0;margin-left:4px"><i class="fa fa-filter"></i> 筛选</button>
+                        <a class="btn btn-primary btn-sm"  style="margin-bottom:0" href="{:url('index')}"><i class="fa fa-filter"></i> 重置</a>
+                    </form>
+                </div>
+            </div>
+            <!--搜索框结束-->
+            <div class="hr-line-dashed"></div>
+
+            <div class="example-wrap">
+                <div class="example">
+                    <div style="overflow-x:scroll;width:100%;">
+                        <table class="table table-bordered table-hover">
+                            <thead>
+                            <tr class="long-tr">
+                                <th>订单编号</th>
+                                <th>评论账号</th>
+                                <th>商品评分</th>
+                                <th>服务评分</th>
+                                <th>物流评分</th>
+                                <th>评价时间</th>
+                                <th>评价内容</th>
+                                <th>评价图集</th>
+                                <th>店家回复</th>
+                                <th>状态</th>
+                            </tr>
+                            </thead>
+                            <tbody id="list-content">
+                            {foreach $list as $vo}
+                            <tr class="long-td">
+                                <td>{$vo.order_no}</td>
+                                <td>{$vo.user_account}</td>
+                                <td>{$vo.goods_score}</td>
+                                <td>{$vo.service_score}</td>
+                                <td>{$vo.express_score}</td>
+                                <td>{$vo.create_time|date="Y-m-d H:i:s"}</td>
+                                <td>{$vo.contents}</td>
+                                <td>
+                                    {foreach $vo.images as $image_url}
+                                    <img src="{$image_url}" alt="" height="100">
+                                    {/foreach}
+                                </td>
+                                <td>
+                                    {if condition="$vo.shop_reply_time eq 0"}
+
+                                        <div>
+                                            <button type="button" id="{$vo.id}"  class="btn btn-primary btn-outline shop-reply" data-toggle="modal" data-target="#myModal">添加回复</button>
+                                        </div>
+                                    {else/}
+                                        {$vo.shop_reply}
+                                    {/if}
+                                </td>
+                                <td>
+                                    {if condition="$vo.status eq 1"}
+                                    <a class="red" href="{:url('adminRevoke',['id' => $vo['id']])}">
+                                        <div><span class="label label-info">正常</span></div>
+                                    </a>
+                                    {elseif condition="$vo.status eq 2"/}
+                                        用户撤销
+                                    {else /}
+                                        <a class="red" href="{:url('activate',['id' => $vo['id']])}">
+                                            <div><span class="label label-danger">后台撤销</span></div>
+                                        </a>
+                                    {/if}
+                                </td>
+                            </tr>
+                            {/foreach}
+                            </tbody>
+                        </table>
+                    </div>
+                    <div id="laypage"></div>
+                </div>
+            </div>
+            <!-- End Example Pagination -->
+        </div>
+    </div>
+</div>
+<!-- End Panel Other -->
+</div>
+
+{include file="public/footer" /}
+<div class="modal  fade" id="myModal" tabindex="-1" role="dialog"  aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                <h3 class="modal-title">添加分类</h3>
+            </div>
+            <form class="form-horizontal" name="shopReply" id="shopReply" method="post" action="{:url('shopReply')}">
+                <div class="ibox-content">
+                    <input type="hidden" id="appraise_id" name="id" />
+
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">回复内容</label>
+                        <div class="col-sm-8">
+                            <textarea name="shop_reply" id="shop_reply" rows="10" class="form-control"/></textarea>
+                        </div>
+                    </div>
+                    <div class="hr-line-dashed"></div>
+
+                </div>
+                <div class="modal-footer">
+                    <button id="formSubmit" type="button" class="btn btn-primary"><i class="fa fa-save"></i> 保存</button>
+                    <button type="button" class="btn btn-danger" data-dismiss="modal"><i class="fa fa-close"></i> 关闭</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+
+<script type="text/javascript" src="/static/admin/js/laypage.js"></script>
+<script type="text/javascript">
+
+
+    $(function(){
+        $(".shop-reply").click(function() {
+            $('#appraise_id').val(this.id);
+        });
+        $('#formSubmit').click(function() {
+
+            if(common.isNullOrEmpty($('#appraise_id').val())){
+                layer.msg('回复id为空',{icon:2,time:1500,shade: 0.1}, function(index){
+                    layer.close(index);
+                });
+                return false;
+            }
+
+            if(common.isNullOrEmpty($('#shop_reply').val())){
+                layer.msg('回复不能为空',{icon:2,time:1500,shade: 0.1}, function(index){
+                    layer.close(index);
+                });
+                return false;
+            }
+
+            $("form#shopReply").submit();
+
+        });
+
+    });
+
+
+
+    layer.photos({
+        photos: '.layer-photos-demo'
+//  ,anim: 5 //0-6的选择，指定弹出图片动画类型，默认随机（请注意，3.0之前的版本用shift参数）
+    });
+
+    layui.use(['laypage', 'layer'], function(){
+        var laypage = layui.laypage
+            ,layer = layui.layer;
+
+        //完整功能
+        laypage.render({
+            elem: 'laypage'
+            ,count: '{$list->total()}' // 总数据条数
+            ,curr: '{$list->currentPage()}' // 当前第几页
+            ,limit: '{$list->listRows()}'   // 每页显示条数
+            ,layout: ['count', 'prev', 'page', 'next', 'refresh', 'skip']
+            ,jump: function(obj, first){
+                //首次不执行
+                if(!first){
+                    $("#searchForm").attr('action', '{:url("index")}?page='+obj.curr
+                        +"goods_score={$goods_score|default=''}&goods_uuid={$goods_uuid}");
+                    $("#searchForm").submit();
+                }
+            }
+        });
+    });
+
+    function remove(id) {
+        layer.confirm('确定要删除吗？', {icon: 3}, function(index){
+            window.location.href="{:url('delete')}?id="+id
+        });
+    }
+</script>
+
+</body>
+</html>
