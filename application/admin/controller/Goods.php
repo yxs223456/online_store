@@ -2,9 +2,9 @@
 
 namespace app\admin\controller;
 
-
-use app\admin\model\GoodsClassifyModel;
-use org\LeftNav;
+use think\Db;
+use think\Exception;
+use think\Validate;
 
 class Goods extends Common {
 
@@ -88,9 +88,115 @@ class Goods extends Common {
         $param["first_goods_classify"] = array_shift($classfly);
         $param["last_goods_classify"] = array_pop($classfly);
         $param["gallery"] = "";
+        $param["shop"] = "";
         $goodsService = $this->goodsService;
 
-//        var_dump($param);exit;
+        //数据校验
+        $validate = validate("GoodsValidate");
+        if(false === $validate->scene($this->request->action(true))
+                ->check($param)) {
+            $this->error($validate->getError());
+        }
+
+        Db::startTrans();
+        try {
+            $result = $goodsService->saveByAllowField($param);
+
+            if ($result === false) {
+                $this->error($goodsService->getError());
+            }
+
+//            $goodsScore = $this->goodsScoreService->saveByAllowField(
+//                array(
+//                    'goods_uuid' => $param['uuid'],
+//                    'shop_uuid' => $param['shop_uuid'],
+//                    'create_time' => time(),
+//                    'update_time' => time()
+//                )
+//            );
+//            if ($goodsScore === false) {
+//                throw new Exception("系统错误");
+//            }
+            Db::commit();
+
+        } catch (\Exception $e) {
+            Db::rollback();
+            $this->error($e->getMessage());
+        }
+        $this->success("添加成功",url("sale"));
+    }
+
+    /**
+     * 编辑页面
+     * @return mixed
+     */
+    public function edit()
+    {
+        $id = input('param.id');
+
+        $info = $this->goodsService->findById($id);
+        if(empty($info)) {
+            $this->error("该商品不存在");
+        }
+        $cateArr = explode("_",$info["goods_classify_path"]);
+        $category = [];
+        $list = $this->goodsClassifyService->getAllByParent("");
+        $category[] = $list;
+        foreach ($cateArr as $value) {
+            $list = $this->goodsClassifyService->getAllByParent($value);
+            !empty($list) && $category[] = $list;
+        }
+
+        $this->assign('info', $info);
+        $this->assign('category', $category);
+        $this->assign('cateArr', $cateArr);
+        return $this->fetch();
+    }
+
+    /**
+     * 添加操作
+     * @return array|\think\response\Json
+     */
+    public function editPost() {
+
+        $param = input('post.');
+        $id = $param["id"];
+        $classfly = array_filter($param["goods_classify"]);
+        isset($param["is_best"]) ? $param["is_best"] = 1 : $param["is_best"] = 0;
+        isset($param["is_recommend"]) ? $param["is_recommend"] = 1 : $param['is_recommend'] = 0;
+        isset($param["is_hot"]) ? $param["is_hot"] = 1 : $param["is_hot"] = 0;
+        isset($param["is_new"]) ? $param["is_new"] = 1 : $param["is_new"] = 0;
+        $param["update_time"] = time();
+        $param["goods_classify_path"] = implode("_",$classfly);
+        $param["first_goods_classify"] = array_shift($classfly);
+        $param["last_goods_classify"] = array_pop($classfly);
+        $param["gallery"] = "";
+        $goodsService = $this->goodsService;
+
+
+        $rules = [
+            'goods_no' => 'require|max:20|unique:goods,goods_no,' . $id . ',id',
+            'product_no' => 'require|max:20|unique:goods,product_no,' . $id . ',id',
+            'goods_name' => 'require|unique:goods,goods_name,' . $id . ',id'
+        ];
+
+        $msg = [
+            'goods_no.require' => '商品编号不能为空',
+            'goods_no.max' => '商品编号长度不能超过20',
+            'goods_no.unique' => '商品编号重复',
+            'product_no.require' => '商品货号不能为空',
+            'product_no.max' => '商品货号长度不能超过20',
+            'product_no.unique' => '商品货号重复',
+            'goods_name.require' => '商品名称不能为空',
+            'goods_name.unique' => '商品名称重复',
+        ];
+        $validate   = Validate::make($rules,$msg);
+        $result = $validate->check($param);
+
+        if(!$result) {
+            $this->error($validate->getError());
+        }
+
         //数据校验
         $validate = validate("GoodsValidate");
         if(false === $validate->scene($this->request->action(true))
@@ -99,8 +205,7 @@ class Goods extends Common {
         }
 
         try {
-
-            $result = $goodsService->saveByAllowField($param);
+            $result = $goodsService->updateByAllowFieldAndId($param,$id);
 
             if($result === false){
                 $this->error($goodsService->getError());
@@ -112,6 +217,33 @@ class Goods extends Common {
             $this->error($e->getMessage());
         }
 
+    }
+
+    /**
+     * 编辑页面
+     * @return mixed
+     */
+    public function editSpec()
+    {
+        $id = input('param.id');
+
+        $info = $this->goodsService->findById($id);
+        if(empty($info)) {
+            $this->error("该商品不存在");
+        }
+        $cateArr = explode("_",$info["goods_classify_path"]);
+        $category = [];
+        $list = $this->goodsClassifyService->getAllByParent("");
+        $category[] = $list;
+        foreach ($cateArr as $value) {
+            $list = $this->goodsClassifyService->getAllByParent($value);
+            !empty($list) && $category[] = $list;
+        }
+
+        $this->assign('info', $info);
+        $this->assign('category', $category);
+        $this->assign('cateArr', $cateArr);
+        return $this->fetch();
     }
 
     /**
@@ -128,7 +260,10 @@ class Goods extends Common {
         }
 
         $this->assign('list',$list);
-        $this->assign('index',$param["index"]);
+        if (isset($param["current_uuid"])) {
+            $this->assign('current_uuid',$param["current_uuid"]);
+        }
+
         return $this->fetch();
     }
 

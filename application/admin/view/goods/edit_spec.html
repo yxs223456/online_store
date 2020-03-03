@@ -12,56 +12,57 @@
         <div class="col-sm-12">
             <div class="ibox float-e-margins">
                 <div class="ibox-title">
-                    <h5>添加商品</h5>
+                    <h5>编辑规格</h5>
                 </div>
                 <div class="ibox-content">
-                    <form class="form-horizontal" name="add" id="add" method="post" action="{:url('addPost')}">
+                    <form class="form-horizontal" name="add" id="add" method="post" action="{:url('editSpec')}">
+                        <input id="id" type="hidden" class="form-control" name="id" value="{$info.id}" >
                         <div class="form-group">
                             <label class="col-sm-3 control-label">商品名称：</label>
                             <div class="input-group col-sm-3">
-                                <input id="goods_name" type="text" class="form-control" name="goods_name" value="{$param['goods_name']|default=''}" >
+                                <input id="goods_name" type="text" class="form-control" name="goods_name" value="{$info.goods_name|default=''}" >
                             </div>
                         </div>
                         <div class="hr-line-dashed"></div>
                         <div class="form-group">
                             <label class="col-sm-3 control-label">商品编号：</label>
                             <div class="input-group col-sm-3">
-                                <input id="goods_no" type="text" class="form-control" name="goods_no" >
+                                <input id="goods_no" type="text" class="form-control" name="goods_no" value="{$info.goods_no}">
                             </div>
                         </div>
                         <div class="hr-line-dashed"></div>
                         <div class="form-group">
                             <label class="col-sm-3 control-label">商品货号：</label>
                             <div class="input-group col-sm-3">
-                                <input id="product_no" type="text" class="form-control" name="product_no" >
+                                <input id="product_no" type="text" class="form-control" name="product_no" value="{$info.product_no}">
                             </div>
                         </div>
                         <div class="hr-line-dashed"></div>
                         <div class="form-group">
                             <label class="col-sm-3 control-label">市场价格：</label>
                             <div class="input-group col-sm-3">
-                                <input id="market_price" type="text" class="form-control" name="market_price" >
+                                <input id="market_price" type="text" class="form-control" name="market_price" value="{$info.market_price}">
                             </div>
                         </div>
                         <div class="hr-line-dashed"></div>
                         <div class="form-group">
                             <label class="col-sm-3 control-label">门店价格：</label>
                             <div class="input-group col-sm-3">
-                                <input id="shop_price" type="text" class="form-control" name="shop_price" >
+                                <input id="shop_price" type="text" class="form-control" name="shop_price" value="{$info.shop_price}">
                             </div>
                         </div>
                         <div class="hr-line-dashed"></div>
                         <div class="form-group">
                             <label class="col-sm-3 control-label">库存：</label>
                             <div class="input-group col-sm-3">
-                                <input id="stock" type="text" class="form-control" name="stock" >
+                                <input id="stock" type="text" class="form-control" name="stock" value="{$info.stock}">
                             </div>
                         </div>
                         <div class="hr-line-dashed">
                         </div><div class="form-group">
                             <label class="col-sm-3 control-label">单位：</label>
                             <div class="input-group col-sm-3">
-                                <input id="goods_unit" type="text" class="form-control" name="goods_unit" >
+                                <input id="goods_unit" type="text" class="form-control" name="goods_unit" value="{$info.goods_unit}">
                             </div>
                         </div>
                         <div class="hr-line-dashed"></div>
@@ -69,8 +70,13 @@
                             <label class="col-sm-3 control-label">是否上架：</label>
                             <div class="col-sm-6">
                                 <div class="radio ">
+                                    {if condition="$info.is_sale eq 1"}
                                     <input type="checkbox" class="js-switch" checked />&nbsp;&nbsp;默认开启
                                     <input name="is_sale" value="1" type="hidden">
+                                    {else}
+                                    <input type="checkbox" class="js-switch" />&nbsp;&nbsp;默认开启
+                                    <input name="is_sale" value="0" type="hidden">
+                                    {/if}
                                 </div>
                             </div>
                         </div>
@@ -78,38 +84,62 @@
                         <div class="form-group">
                             <label class="col-sm-3 control-label">商品属性：</label>
                             <div class="col-sm-6">
+                                {if condition="$info.is_best eq 1"}
                                 <input type="checkbox" name="is_best" checked />&nbsp;&nbsp;精品
+                                {else}
+                                <input type="checkbox" name="is_best" />&nbsp;&nbsp;精品
+                                {/if}
+                                {if condition="$info.is_hot eq 1"}
                                 <input type="checkbox" name="is_hot" checked />&nbsp;&nbsp;热销
+                                {else}
+                                <input type="checkbox" name="is_hot" />&nbsp;&nbsp;热销
+                                {/if}
+                                {if condition="$info.is_new eq 1"}
                                 <input type="checkbox" name="is_new" checked />&nbsp;&nbsp;新品
+                                {else}
+                                <input type="checkbox" name="is_new" />&nbsp;&nbsp;新品
+                                {/if}
+                                {if condition="$info.is_recommend eq 1"}
                                 <input type="checkbox" name="is_recommend" checked />&nbsp;&nbsp;推荐
+                                {else}
+                                <input type="checkbox" name="is_recommend" />&nbsp;&nbsp;推荐
+                                {/if}
+
                             </div>
                         </div>
                         <div class="hr-line-dashed"></div>
                         <div class="form-group">
                             <label class="col-sm-3 control-label">商品分类：</label>
                             <div class="input-group col-sm-3 selected-box" id="selected-box">
+                                <?php foreach($category as $key => $value) : ?>
+
                                 <select class="form-control m-b change-select" name="goods_classify[]">
                                     <option value="">==请选择==</option>
-                                    {foreach $list as $vo}
-                                    <option value="{$vo.uuid}">{$vo.name}</option>
-                                    {/foreach}
+                                    <?php foreach($value as $va) : ?>
+                                    <?php if (isset($cateArr[$key]) && $va["uuid"] == $cateArr[$key]) {?>
+                                    <option value="{$va.uuid}" selected>{$va.name}</option>
+                                    <?php } else { ?>
+                                    <option value="{$va.uuid}">{$va.name}</option>
+                                    <?php } ?>
+                                    <?php endforeach; ?>
                                 </select>
 
+                                <?php endforeach; ?>
                             </div>
                         </div>
                         <div class="hr-line-dashed"></div>
                         <div class="form-group">
                             <label class="col-sm-3 control-label">品牌：</label>
                             <div class="input-group col-sm-3">
-                                <input id="brand" type="text" class="form-control" name="brand" >
+                                <input id="brand" type="text" class="form-control" name="brand" value="{$info.brand}">
                             </div>
                         </div>
                         <div class="hr-line-dashed"></div>
                         <div class="form-group">
                             <label class="col-sm-3 control-label">封面图片：</label>
                             <div class="input-group col-sm-3">
-                                <img id="image_url_src" src="" width="100px">
-                                <input type="hidden" id="image_url" name="image_url" />
+                                <img id="image_url_src" src="{$info.image_url}" width="100px">
+                                <input type="hidden" id="image_url" name="image_url" value="{$info.image_url}"/>
                                 <input type="file" name="file" id="file_image_url"
                                        onchange="uploadImage('image_url_src', 'image_url', 'file_image_url')" class="form-control"/>
                             </div>
@@ -119,7 +149,7 @@
                             <label for="myEditor" class="col-sm-3 control-label">商品描述：</label>
                             <!-- 加载编辑器的容器 -->
                             <div class="input-group col-sm-8">
-                                <textarea id="myEditor" name="description"></textarea>
+                                <textarea id="myEditor" name="description">{$info.description}</textarea>
                             </div>
                         </div>
                         <div class="hr-line-dashed"></div>
@@ -209,24 +239,26 @@
                 $(this).nextAll().remove();
                 return
             }
-            getData(uuid);
+            getData(uuid, "");
         });
 
-        function getData(uuid) {
+        function getData(uuid, current_uuid) {
             $.ajax({
                 url: '/admin/goods/getCat',//地址
                 dataType: 'json',//数据类型
                 type: 'POST',//类型
-                data: {"uuid": uuid},
-                timeout: 2000,//超时
+                data: {"current_uuid": current_uuid, "uuid": uuid},
+                timeout: 4000,//超时
                 //请求成功
                 success: function (data) {
                     $('#selected-box').append(data);
                     console.log(data);
+                    return true
                 },
                 //失败/超时
                 error: function (data) {
                     console.log(data)
+                    return false
                 }
             })
         }
@@ -252,16 +284,17 @@
             $(selector).chosen(config[selector]);
         }
 
-        var index = $('.change-select').length;
-        console.log(index);
-        var uuid = $(this).val();
-        console.log(uuid);
-        if (uuid === "") {
-            $(this).nextAll().remove();
-        } else {
-            getData(index,uuid);
-        }
-
+        // init goods category
+//        var data = "{$info.goods_classify_path}";
+//
+//        //可以用字符或字符串分割
+//        arr=data.split('_');
+//        for(var i=0;i<arr.length;i++)
+//        {
+//            console.log(i);
+//            console.log(arr[i]);
+//            getData(arr[i], arr[i + 1]);
+//        }
     });
 
 
