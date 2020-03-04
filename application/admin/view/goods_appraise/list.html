@@ -19,6 +19,7 @@
             <div class="row">
                 <div class="col-sm-12">
                     <form method="post" action="{:url('index')}" id="searchForm" class="form-inline">
+                        <input type="hidden" name="goods_uuid" value="{$goods_uuid}">
                         <select name="goods_score" class="form-control">
                             <option value="">商品评分</option>
                             <option value="1" {$goods_score=== 1 ?'selected' : ''}>1星</option>

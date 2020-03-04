@@ -8,8 +8,18 @@
 
 namespace app\common\enum;
 
+/**
+ * 会员状态
+ * Class UserStatusEnum
+ * @package app\common\enum
+ */
 class UserStatusEnum
 {
+    use EnumTrait;
+
     const YES = 1;
+    const YES_DESC = "正常";
+
     const FORBIDDEN = 0;
+    const FORBIDDEN_DESC = "禁用";
 }

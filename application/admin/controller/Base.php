@@ -2,6 +2,8 @@
 
 namespace app\admin\controller;
 
+use app\admin\service\DistributorsBalanceLogService;
+use app\admin\service\DistributorsService;
 use app\admin\service\GoodsAppraiseService;
 use app\admin\service\GoodsBrandService;
 use app\admin\service\GoodsClassifyService;
@@ -12,6 +14,7 @@ use app\admin\service\GoodsSpecItemService;
 use app\admin\service\GoodsSpecService;
 use app\admin\service\UserBaseService;
 use app\admin\service\UserLevelService;
+use app\admin\service\UserScoreLogService;
 use think\Controller;
 
 use app\admin\service\Admin as adminService;
@@ -28,6 +31,8 @@ class Base extends Controller {
     protected $authGroupAccessService;
     protected $authRuleService;
     protected $companyService;
+    protected $distributorsService;
+    protected $distributorsBalanceLogService;
     protected $orderService;
     protected $goodsAppraiseService;
     protected $goodsBrandService;
@@ -36,6 +41,7 @@ class Base extends Controller {
     protected $goodsSpecClassifyService;
     protected $goodsService;
     protected $userLevelService;
+    protected $userScoreLogService;
     protected $userService;
     protected $goodsSpecItemService;
     protected $goodsSpecService;
@@ -49,9 +55,12 @@ class Base extends Controller {
      * @param authGroupAccessService $authGroupAccessService
      * @param authRuleService $authRuleService
      * @param companyService $companyService
+     * @param DistributorsService $distributorsService
+     * @param DistributorsBalanceLogService $distributorsBalanceLogService
      * @param orderService $orderService
      * @param UserBaseService $userBaseService
      * @param UserLevelService $userLevelService
+     * @param UserScoreLogService $userScoreLogService
      * @param GoodsAppraiseService $goodsAppraiseService
      * @param GoodsBrandService $goodsBrandService
      * @param GoodsScoreService $goodsScoreService
@@ -63,8 +72,11 @@ class Base extends Controller {
      */
     public function __construct( AdminService $adminService, AuthGroupService $authGroupService,
                                  AuthGroupAccessService $authGroupAccessService, AuthRuleService $authRuleService,
-                                 companyService $companyService, orderService $orderService,UserBaseService $userBaseService,
-                                 UserLevelService $userLevelService, GoodsAppraiseService $goodsAppraiseService,
+                                 companyService $companyService, DistributorsService $distributorsService,
+                                 DistributorsBalanceLogService $distributorsBalanceLogService,
+                                 orderService $orderService,UserBaseService $userBaseService,
+                                 UserLevelService $userLevelService, UserScoreLogService $userScoreLogService,
+                                 GoodsAppraiseService $goodsAppraiseService,
                                  GoodsBrandService $goodsBrandService, GoodsScoreService $goodsScoreService,
                                  GoodsSpecClassifyService $goodsSpecClassifyService, GoodsClassifyService $goodsClassifyService,
                                  GoodsService $goodsService,GoodsSpecItemService $goodsSpecItemService,
@@ -77,6 +89,8 @@ class Base extends Controller {
         $this->authGroupAccessService = $authGroupAccessService;
         $this->authRuleService = $authRuleService;
         $this->companyService = $companyService;
+        $this->distributorsService = $distributorsService;
+        $this->distributorsBalanceLogService = $distributorsBalanceLogService;
         $this->goodsAppraiseService = $goodsAppraiseService;
         $this->goodsBrandService = $goodsBrandService;
         $this->goodsClassifyService = $goodsClassifyService;
@@ -84,6 +98,7 @@ class Base extends Controller {
         $this->goodsService = $goodsService;
         $this->orderService = $orderService;
         $this->userLevelService = $userLevelService;
+        $this->userScoreLogService = $userScoreLogService;
         $this->userService = $userBaseService;
         $this->goodsSpecItemService = $goodsSpecItemService;
         $this->goodsSpecService = $goodsSpecService;

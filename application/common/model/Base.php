@@ -29,8 +29,12 @@ class Base extends Model
         return $this->isUpdate(true)->save($data, [static::getPk() => $id]);
     }
 
-    public function findByUserIdAndSource($userId, $source)
+    public function getUuid($length = 32)
     {
-        return $this->where('userId', $userId)->where('source', $source)->find();
+        do {
+            $uuid = getRandomString($length);
+        } while($this->where("uuid", $uuid)->count());
+
+        return $uuid;
     }
 }

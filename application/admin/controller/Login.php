@@ -34,13 +34,6 @@ class Login extends Base {
 
         $hasUser = $this->adminService->findAdminForLogin($username);
 
-        if(isNullOrEmpty($hasUser)) {
-            $this->error('用户不存在');
-        }
-
-
-        $hasUser = $this->adminService->findAdminForLogin($username);
-
         if(empty($hasUser)){
             $this->error("管理员不存在");
         }

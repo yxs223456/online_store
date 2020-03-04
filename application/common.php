@@ -70,38 +70,6 @@ function getEnumValue($enum, $chosenKey)
 }
 
 /**
- * 枚举select生成
- * @param $enum
- * @param $name
- * @param string $default
- * @param int $val
- * @param int $hasAll
- * @return string
- */
-function getEnumSelectWidget($enum, $name, $default = "请选择", $val = "-999", $hasAll = 0)
-{
-
-    $all = $hasAll == 1 ? '<option value="">' . $default . '</option>' : '';
-
-    $html = '<select class="form-control chosen-select" id=\'' . $name . '\' name=\'' . $name . '\'>' . $all;
-
-    foreach ($enum as $key => $value) {
-
-        $selected = '';
-
-        if ($value["value"] == $val)
-            $selected = 'selected="selected"';
-
-        $html .= '<option value="' . $value["value"] . '" ' . $selected . '>' . $value["desc"] . '</option>';
-
-    }
-
-    $html .= '</select>';
-
-    return $html;
-}
-
-/**
  * 获取当前日期
  * @return false|string
  */
