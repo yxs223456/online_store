@@ -234,9 +234,9 @@
 
         $(document).on("change", ".change-select", function () {
             var uuid = $(this).val();
-            console.log(uuid);
+
+            $(this).nextAll().remove();
             if (uuid === "") {
-                $(this).nextAll().remove();
                 return
             }
             getData(uuid, "");
