@@ -1,0 +1,148 @@
+{include file="public/header" /}
+<style>
+    .image-box {
+        position: relative;
+        z-index: 2;
+        margin-left: 5px;
+        margin-top: 5px;
+        float:left;
+        height: 180px;
+        width: 180px;
+    }
+    .image-show {
+        height: 180px;width: 180px;
+        border: 1px solid rgb(59, 114, 165);
+    }
+    .btn-del {
+        background: #1094FA;
+        color: #ffffff;
+        cursor: pointer;
+        height: 18px;
+        line-height: 18px;
+        padding: 0 5px;
+        position: absolute;
+        right: 0px;
+        top: 0px;
+        z-index: 9999;
+    }
+</style>
+<body class="gray-bg">
+<div class="wrapper wrapper-content animated fadeInRight">
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="ibox float-e-margins">
+
+                <div class="ibox-title">
+                    <h5>商品图片</h5>
+                </div>
+                <div class="ibox-content">
+                    <form class="form-horizontal" name="add" id="add" method="post" action="{:url('editImgPost')}">
+                    <input type="hidden" name="id" value="{$info.id}" />
+                    <div class="form-group">
+                        <div class="input-group col-sm-12" id="images-box">
+                            {foreach $gallery as $vo}
+                                <div class="image-box">
+                                    <img src="{$vo}" class="image-show">
+                                    <input type="hidden" name="gallery[]" value="{$vo}"/>
+                                    <span class="btn-del">删除</span>
+                                </div>
+                            {/foreach}
+                        </div>
+                    </div>
+                    <div class="hr-line-dashed"></div>
+                    <div class="form-group">
+                        <div class="col-sm-4 col-sm-offset-3">
+                            <input type="file" id="upload-file" name="uploads" value="" style="display: none;" multiple="multiple" onchange="uploadImage(this)">
+                            <button id="upload" type="button" class="btn btn-primary"><i class="fa fa-cloud-upload"></i> 选择图片</button>&nbsp;&nbsp;&nbsp;
+                            <button id="formSubmit" type="button" class="btn btn-primary"><i class="fa fa-save"></i> 保存</button>&nbsp;&nbsp;&nbsp;
+                            <a class="btn btn-danger" href="javascript:history.go(-1);"><i class="fa fa-close"></i> 返回</a>
+                        </div>
+                    </div>
+                    </form>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+{include file="public/footer" /}
+<script src="/static/admin/js/ajaxfileupload.js"></script>
+
+<script type="text/javascript">
+
+    //提交
+    $().ready(function () {
+
+        $(document).on('click',".btn-del",function () {
+           $(this).closest(".image-box").remove()
+        });
+
+        $("#upload").click(function () {
+            $("input[type='file']").click();
+        });
+
+
+        $('#formSubmit').click(function () {
+
+            if ($(".image-box").length < 1) {
+                layer.msg('请上传至少一张图片', {icon: 2, time: 1500, shade: 0.1}, function (index) {
+                    layer.close(index);
+                });
+                return false;
+            }
+
+            $("form#add").submit();
+
+        });
+
+    });
+
+    function addImg(url) {
+        var len = url.length;
+        for (i = 0;i<len;i++) {
+            var html = `<div class="image-box">
+                            <img src="` + url[i] +`" class="image-show">
+                            <input type="hidden" name="gallery[]" value="` + url[i] + `"/>
+                            <span class="btn-del">删除</span>
+                        </div>`;
+            $("#images-box").append(html);
+        }
+    }
+
+    function uploadImage(obj) {
+
+        var files = obj.files;
+        var fd = new FormData();
+
+        var l = files.length;
+        for (i = 0; i < l; i++) {
+            fd.append("files[]",files[i]);
+        }
+
+        $.ajax({
+            url: "/admin/upload/uploadImages",
+            type: "POST",
+            data: fd,
+            dataType: 'json',
+            cache: false,         //不设置缓存
+            processData: false,  // 不处理数据
+            contentType: false,  // 不设置内容类型
+            success: function (data, status)  //服务器成功响应处理函数
+            {
+                console.log(data);
+                if (data['code'] !== 200) {
+                    layer.msg(data['msg']);
+                    return false;
+                }
+                addImg(data['data']);
+            },
+            error: function (data, status, e)//服务器响应失败处理函数
+            {
+                console.log(e);
+            }
+        });
+    }
+
+</script>
+</body>
+</html>

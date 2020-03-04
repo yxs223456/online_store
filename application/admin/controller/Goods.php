@@ -703,4 +703,44 @@ class Goods extends Common {
 
     }
 
+    public function editImg()
+    {
+        $id = input('param.id');
+
+        $info = $this->goodsService->findById($id);
+        if(empty($info)) {
+            $this->error("该商品不存在");
+        }
+        $gallery = $info["gallery"];
+        if (empty($gallery)) {
+            $gallery = array();
+        } else {
+            $gallery = json_decode($gallery,true);
+        }
+
+        $this->assign('info', $info);
+        $this->assign('gallery', $gallery);
+        return $this->fetch();
+    }
+
+    public function editImgPost()
+    {
+        $param = input('post.');
+        $id = $param['id'];
+        $gallery = $param["gallery"];
+        if (empty($id)) {
+            $this->error("产品不存在");
+        }
+        if (empty($gallery)) {
+            $this->error("上传至少一张图片");
+        }
+
+        $result = $this->goodsService->updateByIdAndData($id,
+            array("gallery" => json_encode($gallery),'update_time' => time()));
+        if($result === false) {
+            $this->error($this->goodsService->getError());
+        }
+
+        $this->success("上传成功");
+    }
 }
