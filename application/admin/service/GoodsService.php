@@ -138,4 +138,18 @@ class GoodsService extends Base {
         }
         return $data;
     }
+
+    public function filterNullString($var) {
+        if ($var === "" || $var === null) {
+            return false;
+        }
+        return true;
+    }
+
+    public function filterNullStringZero($var) {
+        if ($var === "" || $var === null || $var === 0 || $var === "0") {
+            return false;
+        }
+        return true;
+    }
 }

@@ -57,11 +57,15 @@
                                 </td>
                                 <?php unset($item["is_default"]);unset($item["goods_spec_item_uuids"]); ?>
                                 <?php foreach($item as $k => $i): ?>
-                                <?php if(in_array($k,array("product_no","market_price","shop_price","stock","sale_num"),true)) { ?>
-                                <td><input type="text" name="{$k}[]" value="{$i}"></td>
-                                <?php } else {?>
-                                <td>{$i}</td>
-                                <?php } ?>
+                                    <?php if(in_array($k,array("product_no","market_price","shop_price","stock","sale_num"),true)) { ?>
+                                        <?php if ($k == "sale_num") {?>
+                                            <td><input type="text" name="{$k}[]" value="{$i}" disabled></td>
+                                        <?php } else { ?>
+                                            <td><input type="text" name="{$k}[]" value="{$i}"></td>
+                                        <?php } ?>
+                                    <?php } else {?>
+                                        <td>{$i}</td>
+                                    <?php } ?>
                                 <?php endforeach; ?>
                             </tr>
                             <?php endforeach; ?>
@@ -98,6 +102,70 @@
 //                });
 //                return false;
 //            }
+
+            if ($("input[name='product_no[]']").length < 1) {
+                layer.msg('先获取销售规格', {icon: 2, time: 1500, shade: 0.1}, function (index) {
+                    layer.close(index);
+                });
+                return false;
+            }
+
+            var flag = true
+            $("input[name='product_no[]']").each(function () {
+                if (common.isNullOrEmpty($(this).val())) {
+                    layer.msg('货号不能有空', {icon: 2, time: 1500, shade: 0.1}, function (index) {
+                        layer.close(index);
+                    });
+                    flag = false;
+                    return false;
+                }
+            });
+
+            if (!flag) {
+                return false;
+            }
+
+            $("input[name='market_price[]']").each(function () {
+                if (common.isNullOrEmptyForDictionary($(this).val())) {
+                    layer.msg('市场价格不能有空', {icon: 2, time: 1500, shade: 0.1}, function (index) {
+                        layer.close(index);
+                    });
+                    flag = false;
+                    return false;
+                }
+            });
+
+            if (!flag) {
+                return false;
+            }
+
+            $("input[name='shop_price[]']").each(function () {
+                if (common.isNullOrEmptyForDictionary($(this).val())) {
+                    layer.msg('本店价格不能有空', {icon: 2, time: 1500, shade: 0.1}, function (index) {
+                        layer.close(index);
+                    });
+                    flag = false;
+                    return false;
+                }
+            });
+
+            if (!flag) {
+                return false;
+            }
+
+            $("input[name='stock[]']").each(function () {
+                if (common.isNullOrEmptyForDictionary($(this).val())) {
+                    layer.msg('库存不能有空', {icon: 2, time: 1500, shade: 0.1}, function (index) {
+                        layer.close(index);
+                    });
+                    flag = false;
+                    return false;
+                }
+            });
+
+            if (!flag) {
+                return false;
+            }
 
             $("form#add").submit();
 

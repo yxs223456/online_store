@@ -352,6 +352,31 @@ class Goods extends Common {
             $this->error("该商品不存在");
         }
 
+        if (empty($param["product_no"]) ||
+            count($param["product_no"]) != count(array_filter($param["product_no"],
+                array($this->goodsService,"filterNullStringZero")))
+        ) {
+            $this->error("货号不能为空");
+        }
+        if (empty($param["market_price"]) ||
+            count($param["market_price"]) != count(array_filter($param["market_price"],
+                array($this->goodsService,"filterNullString")))
+        ) {
+            $this->error("市场价不能为空");
+        }
+        if (empty($param["shop_price"]) ||
+            count($param["shop_price"]) != count(array_filter($param["shop_price"],
+                array($this->goodsService,"filterNullString")))
+        ) {
+            $this->error("本店价不能为空");
+        }
+        if (empty($param["stock"]) ||
+            count($param["stock"]) != count(array_filter($param["stock"],
+                array($this->goodsService,"filterNullString")))
+        ) {
+            $this->error("库存不能为空");
+        }
+
         $goodsSpecService = $this->goodsSpecService;
         $insertData = $goodsSpecService->getInsertData($param, $goods);
 
