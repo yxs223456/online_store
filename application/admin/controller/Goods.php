@@ -65,7 +65,10 @@ class Goods extends Common {
     public function add()
     {
         $list = $this->goodsClassifyService->getAllByParent("");
+        $brand = $this->goodsBrandService->getAllName();
+
         $this->assign('list', $list);
+        $this->assign('brand', $brand);
         return $this->fetch();
     }
 
@@ -106,17 +109,17 @@ class Goods extends Common {
                 $this->error($goodsService->getError());
             }
 
-//            $goodsScore = $this->goodsScoreService->saveByAllowField(
-//                array(
-//                    'goods_uuid' => $param['uuid'],
-//                    'shop_uuid' => $param['shop_uuid'],
-//                    'create_time' => time(),
-//                    'update_time' => time()
-//                )
-//            );
-//            if ($goodsScore === false) {
-//                throw new Exception("系统错误");
-//            }
+            $goodsScore = $this->goodsScoreService->saveByAllowField(
+                array(
+                    'goods_uuid' => $param['uuid'],
+                    'shop_uuid' => "88888888",
+                    'create_time' => time(),
+                    'update_time' => time()
+                )
+            );
+            if ($goodsScore === false) {
+                throw new Exception("系统错误");
+            }
             Db::commit();
 
         } catch (\Exception $e) {
@@ -142,12 +145,17 @@ class Goods extends Common {
         $category = [];
         $list = $this->goodsClassifyService->getAllByParent("");
         $category[] = $list;
-        foreach ($cateArr as $value) {
-            $list = $this->goodsClassifyService->getAllByParent($value);
-            !empty($list) && $category[] = $list;
+        if (!empty(array_filter($cateArr))) {
+            foreach ($cateArr as $value) {
+                $list = $this->goodsClassifyService->getAllByParent($value);
+                !empty($list) && $category[] = $list;
+            }
         }
 
+        $brand = $this->goodsBrandService->getAllName();
+
         $this->assign('info', $info);
+        $this->assign('brand', $brand);
         $this->assign('category', $category);
         $this->assign('cateArr', $cateArr);
         return $this->fetch();

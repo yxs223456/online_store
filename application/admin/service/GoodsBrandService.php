@@ -9,6 +9,7 @@
 namespace app\admin\service;
 
 use app\admin\model\GoodsBrandModel;
+use app\common\enum\DbDataIsDeleteEnum;
 
 class GoodsBrandService extends Base {
 
@@ -16,5 +17,12 @@ class GoodsBrandService extends Base {
     {
         parent::__construct();
         $this->currentModel = new GoodsBrandModel();
+    }
+
+    public function getAllName()
+    {
+        return $this->currentModel
+            ->where("is_delete" ,DbDataIsDeleteEnum::NO)
+            ->column("name","uuid");
     }
 }
