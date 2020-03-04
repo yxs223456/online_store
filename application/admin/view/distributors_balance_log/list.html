@@ -111,7 +111,12 @@
             ,jump: function(obj, first){
                 //首次不执行
                 if(!first){
-                    $("#searchForm").attr('action', '{:url("index")}?page='+obj.curr+"distributors_uuid={$distributors_uuid}");
+                    $("#searchForm").attr('action', '{:url("index")}?page='+obj.curr+
+                        "distributors_uuid={$distributors_uuid}" +
+                        "&log_type={$log_type|default=''}" +
+                        "&add_type={$add_type|default=''}" +
+                        "&reduce_type={$reduce_type|default=''}"
+                    );
                     $("#searchForm").submit();
                 }
             }
