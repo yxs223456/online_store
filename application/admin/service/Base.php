@@ -44,4 +44,44 @@ class Base extends Model {
     {
         return $this->currentModel->getTable();
     }
+
+    /**
+     * 根据uuid和数据更新某一实体
+     * @param $uuid
+     * @param $data
+     * @return mixed
+     */
+    public function updateByUuidAndData($uuid, $data)
+    {
+        return $this->currentModel->isUpdate(true)->save($data, ["uuid" => $uuid]);
+    }
+
+    /**
+     * 根据goodsUuid删除数据
+     *
+     * @param $goodsUuid
+     * @return mixed
+     */
+    public function deleteByGoodsUuid($goodsUuid)
+    {
+        return $this->currentModel
+            ->where("goods_uuid",$goodsUuid)
+            ->update(array("is_delete" => DbDataIsDeleteEnum::YES));
+    }
+
+    /**
+     * 生成uuid
+     *
+     * @param $length
+     * @return string
+     */
+    public function getUuid($length)
+    {
+        $pattern = '1234567890abcdefghijklmnopqrstuvwxyz';
+        $key = "";
+        for ($i = 0; $i < $length; $i++) {
+            $key .= $pattern{mt_rand(0, 35)}; //生成php随机数
+        }
+        return $key;
+    }
 }

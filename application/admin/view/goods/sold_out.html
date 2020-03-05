@@ -99,13 +99,13 @@
                                     <td>{$vo["sale_num"]}</td>
                                     <td>{$vo["stock"]}</td>
                                     <td>
-                                        <a href="{:url('detail',['id'=>$vo['id']])}" class="btn btn-primary btn-xs">
+                                        <a href="{:url('detail',['uuid'=>$vo['uuid']])}" class="btn btn-primary btn-xs">
                                             <i class="fa fa-paste"></i>查看
                                         </a>&nbsp;
-                                        <a href="{:url('edit',['id'=>$vo['id']])}" class="btn btn-primary btn-xs">
+                                        <a href="{:url('edit',['uuid'=>$vo['uuid']])}" class="btn btn-primary btn-xs">
                                             <i class="fa fa-paste"></i>编辑
                                         </a>&nbsp;
-                                        <a href="{:url('delete',['id'=>$vo['id']])}" class="btn btn-primary btn-xs">
+                                        <a href="{:url('delete',['uuid'=>$vo['uuid']])}" class="btn btn-primary btn-xs">
                                             <i class="fa fa-paste"></i>删除
                                         </a>&nbsp;
                                     </td>

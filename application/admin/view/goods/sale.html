@@ -99,20 +99,11 @@
                                     <td>{$vo["sale_num"]}</td>
                                     <td>{$vo["stock"]}</td>
                                     <td>
-                                        <a href="{:url('detail',['id'=>$vo['id']])}" class="btn btn-primary btn-xs">
+                                        <a href="{:url('detail',['uuid'=>$vo['uuid']])}" class="btn btn-primary btn-xs">
                                             <i class="fa fa-paste"></i>查看
                                         </a>&nbsp;
-                                        <a href="{:url('edit',['id'=>$vo['id']])}" class="btn btn-primary btn-xs">
+                                        <a href="{:url('edit',['uuid'=>$vo['uuid']])}" class="btn btn-primary btn-xs">
                                             <i class="fa fa-paste"></i>编辑
-                                        </a>&nbsp;
-                                        <a href="{:url('editSpec',['id'=>$vo['id']])}" class="btn btn-primary btn-xs">
-                                            <i class="fa fa-paste"></i>规格
-                                        </a>&nbsp;
-                                        <a href="{:url('editSale',['id'=>$vo['id']])}" class="btn btn-primary btn-xs">
-                                            <i class="fa fa-paste"></i>销售规格
-                                        </a>&nbsp;
-                                        <a href="{:url('editImg',['id'=>$vo['id']])}" class="btn btn-primary btn-xs">
-                                            <i class="fa fa-paste"></i>上传图片
                                         </a>&nbsp;
                                         <a href="/admin/goods_appraise/index?goods_uuid={$vo.uuid}" class="btn btn-primary btn-xs">
                                             <i class="fa fa-paste"></i>查看评价

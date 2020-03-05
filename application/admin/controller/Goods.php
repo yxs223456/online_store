@@ -45,11 +45,11 @@ class Goods extends Common {
 
     public function detail()
     {
-        $id = input('param.id');
+        $uuid = input('param.uuid');
 
         $goodsService = $this->goodsService;
 
-        $result = $goodsService->findById($id);
+        $result = $goodsService->findByUuid($uuid);
         if (false === $result) {
             $this->error($goodsService->getError());
         }
@@ -58,6 +58,7 @@ class Goods extends Common {
         return $this->fetch();
 
     }
+
     /**
      * 添加页面
      * @return mixed
@@ -126,7 +127,7 @@ class Goods extends Common {
             Db::rollback();
             $this->error($e->getMessage());
         }
-        $this->success("添加成功",url("sale"));
+        $this->success("添加成功",url("edit",array("uuid" => $param['uuid'],"tab"=>'editSpec')));
     }
 
     /**
@@ -135,12 +136,14 @@ class Goods extends Common {
      */
     public function edit()
     {
-        $id = input('param.id');
+        $uuid = input('param.uuid');
+        $tab = input('param.tab',"edit");
 
-        $info = $this->goodsService->findById($id);
+        $info = $this->goodsService->findByUuid($uuid);
         if(empty($info)) {
             $this->error("该商品不存在");
         }
+
         $cateArr = explode("_",$info["goods_classify_path"]);
         $category = [];
         $list = $this->goodsClassifyService->getAllByParent("");
@@ -154,11 +157,56 @@ class Goods extends Common {
 
         $brand = $this->goodsBrandService->getAllName();
 
+        // edit 页面数据
+        $this->assign('tab', $tab);
         $this->assign('info', $info);
         $this->assign('brand', $brand);
         $this->assign('category', $category);
         $this->assign('cateArr', $cateArr);
+
+
+        // editSale 页面数据
+        // 获取商品分类
+        $classifyUuids = explode("_",$info["goods_classify_path"]);
+        // 根据商品分类获取规格分类
+        $spec = $this->goodsSpecClassifyService->getClassifyByClassifyUuids($classifyUuids);
+        // 获取规格分类符合要求的规格
+        $classify = $this->goodsService->getClassifyData($classifyUuids, $spec);
+        // 获取规格item
+        $classifyItem = $this->goodsSpecItemService->getItemByGoodsUuid($info["uuid"]);
+
+        //判断是否使用checkbox数组
+        $goodsSpecUsed = $this->goodsSpecService->getSpecUsedItemUuids($info["uuid"]);
+
+        // 获取table数据
+        $orglist = $this->goodsSpecService->findByGoodsUuid($info["uuid"]);
+        $list = $this->goodsSpecService->formatList($orglist,
+            array_combine(array_column($classifyItem,'uuid'),array_column($classifyItem,'name')));
+
+        // 获取table表头
+        $specItemUuids = explode("_",array_pop($orglist)["goods_spec_item_uuids"]);
+        $specClassifyUuids = $this->goodsSpecItemService->getClassifyUuid($specItemUuids);
+        $classifyTitle = $this->goodsSpecClassifyService->getNameByUuids($specClassifyUuids);
+
+
+        $this->assign("classify",$classify);
+        $this->assign("classifyItem",$classifyItem);
+        $this->assign("goodsSpecUsed",$goodsSpecUsed);
+        $this->assign("classifyTitle",$classifyTitle);
+        $this->assign("list",$list);
+
+
+        // editImg 数据
+        $gallery = $info["gallery"];
+        if (empty($gallery)) {
+            $gallery = array();
+        } else {
+            $gallery = json_decode($gallery,true);
+        }
+
+        $this->assign('gallery', $gallery);
         return $this->fetch();
+
     }
 
     /**
@@ -168,7 +216,7 @@ class Goods extends Common {
     public function editPost() {
 
         $param = input('post.');
-        $id = $param["id"];
+        $uuid = $param["uuid"];
         $classfly = array_filter($param["goods_classify"]);
         isset($param["is_best"]) ? $param["is_best"] = 1 : $param["is_best"] = 0;
         isset($param["is_recommend"]) ? $param["is_recommend"] = 1 : $param['is_recommend'] = 0;
@@ -183,9 +231,9 @@ class Goods extends Common {
 
 
         $rules = [
-            'goods_no' => 'require|max:20|unique:goods,goods_no,' . $id . ',id',
-            'product_no' => 'require|max:20|unique:goods,product_no,' . $id . ',id',
-            'goods_name' => 'require|unique:goods,goods_name,' . $id . ',id'
+            'goods_no' => 'require|max:20|unique:goods,goods_no,' . $uuid . ',uuid',
+            'product_no' => 'require|max:20|unique:goods,product_no,' . $uuid . ',uuid',
+            'goods_name' => 'require|unique:goods,goods_name,' . $uuid . ',uuid'
         ];
 
         $msg = [
@@ -213,42 +261,18 @@ class Goods extends Common {
         }
 
         try {
-            $result = $goodsService->updateByAllowFieldAndId($param,$id);
+            $result = $goodsService->updateByAllowFieldAndUuid($param,$uuid);
 
             if($result === false){
                 $this->error($goodsService->getError());
             }
 
-            $this->success("添加成功",url("sale"));
+            $this->success("添加成功",url("edit",array("uuid" => $uuid,"tab"=>'edit')));
 
         } catch(\PDOException $e) {
             $this->error($e->getMessage());
         }
 
-    }
-
-    /**
-     * 编辑页面
-     * @return mixed
-     */
-    public function editSpec()
-    {
-        $id = input('param.id');
-
-        $info = $this->goodsService->findById($id);
-        if(empty($info)) {
-            $this->error("该商品不存在");
-        }
-        $classifyUuids = explode("_",$info["goods_classify_path"]);
-        $spec = $this->goodsSpecClassifyService->getClassifyByClassifyUuids($classifyUuids);
-        $classify = $this->goodsService->getClassifyData($classifyUuids, $spec);
-        $classifyItem = $this->goodsSpecItemService->getItemByGoodsUuid($info["uuid"]);
-
-        $this->assign("classify",$classify);
-        $this->assign("classifyItem",$classifyItem);
-
-        $this->assign('info', $info);
-        return $this->fetch();
     }
 
     /**
@@ -298,52 +322,7 @@ class Goods extends Common {
         } catch (\Exception $e) {
             $this->error($e->getMessage());
         }
-        $this->success("添加成功");
-    }
-
-    /**
-     * 编辑销售规格页面
-     * @return mixed
-     */
-    public function editSale()
-    {
-        $id = input('param.id');
-
-        $info = $this->goodsService->findById($id);
-        if(empty($info)) {
-            $this->error("该商品不存在");
-        }
-        // 获取商品分类
-        $classifyUuids = explode("_",$info["goods_classify_path"]);
-        // 根据商品分类获取规格分类
-        $spec = $this->goodsSpecClassifyService->getClassifyByClassifyUuids($classifyUuids);
-        // 获取规格分类符合要求的规格
-        $classify = $this->goodsService->getClassifyData($classifyUuids, $spec);
-        // 获取规格item
-        $classifyItem = $this->goodsSpecItemService->getItemByGoodsUuid($info["uuid"]);
-
-        //判断是否使用checkbox数组
-        $goodsSpecUsed = $this->goodsSpecService->getSpecUsedItemUuids($info["uuid"]);
-
-        // 获取table数据
-        $orglist = $this->goodsSpecService->findByGoodsUuid($info["uuid"]);
-        $list = $this->goodsSpecService->formatList($orglist,
-            array_combine(array_column($classifyItem,'uuid'),array_column($classifyItem,'name')));
-
-        // 获取table表头
-        $specItemUuids = explode("_",array_pop($orglist)["goods_spec_item_uuids"]);
-        $specClassifyUuids = $this->goodsSpecItemService->getClassifyUuid($specItemUuids);
-        $classifyTitle = $this->goodsSpecClassifyService->getNameByUuids($specClassifyUuids);
-
-
-        $this->assign("classify",$classify);
-        $this->assign("classifyItem",$classifyItem);
-        $this->assign("goodsSpecUsed",$goodsSpecUsed);
-        $this->assign("classifyTitle",$classifyTitle);
-        $this->assign("list",$list);
-
-        $this->assign('info', $info);
-        return $this->fetch();
+        $this->success("添加成功",url("edit",array("uuid" => $param['goods_uuid'],"tab"=>'editSpec')));
     }
 
     /**
@@ -355,7 +334,7 @@ class Goods extends Common {
         $param = input('post.');
 
         $goodsUuid = $param["goods_uuid"];
-        $goods = $this->goodsService->findByUuid($goodsUuid);
+        $goods = $this->goodsService->findByUuid($goodsUuid)->toArray();
         if(empty($goods)) {
             $this->error("该商品不存在");
         }
@@ -405,12 +384,129 @@ class Goods extends Common {
                 throw new Exception("操作失败");
             }
 
+            $goods = $this->goodsService->updateByUuidAndData($goodsUuid,array("is_spec" => 1));
+            if ($goods === false) {
+                throw new Exception("操作失败");
+            }
+
             Db::commit();
         } catch (\Exception $e) {
             Db::rollback();
             $this->error($e->getMessage());
         }
-        $this->success("编辑成功");
+        $this->success("编辑成功",url("edit",array("uuid" => $goodsUuid,"tab"=>'editSale')));
+    }
+
+    public function editImgPost()
+    {
+        $param = input('post.');
+        $uuid = $param['uuid'];
+        $gallery = $param["gallery"];
+        if (empty($uuid)) {
+            $this->error("产品不存在");
+        }
+        if (empty($gallery)) {
+            $this->error("上传至少一张图片");
+        }
+
+        $result = $this->goodsService->updateByAllowFieldAndUuid(
+            array("gallery" => json_encode($gallery),'update_time' => time()),
+            $uuid);
+        if($result === false) {
+            $this->error($this->goodsService->getError());
+        }
+
+        $this->success("上传成功",url("edit",array("uuid" => $uuid,"tab"=>'editImg')));
+    }
+
+    /**
+     * 删除商品
+     *
+     * @throws Exception
+     */
+    public function delete() {
+
+        $uuid = input('param.uuid');
+
+        $goods = $this->goodsService->findByuuId($uuid);
+
+        if($goods['is_delete'] == 1) {
+            $this->error("该商品已删除状态");
+        }
+
+        DB::startTrans();
+        try {
+            // delete goods
+            $result = $this->goodsService->updateByUuIdAndData($uuid,["is_delete"=>1]);
+            if($result === false) {
+                throw new Exception($this->goodsService->getError());
+            }
+
+            // delete spec item
+            $goodsSpec = $this->goodsSpecItemService->deleteByGoodsUuid($uuid);
+            if($goodsSpec === false) {
+                throw new Exception($this->goodsSpecItemService->getError());
+            }
+
+            // delete goods spec
+            $goodsSale = $this->goodsSpecService->deleteByGoodsUuid($uuid);
+            if($goodsSale === false) {
+                throw new Exception($this->goodsSpecService->getError());
+            }
+
+            DB::commit();
+        } catch (\PDOException $e) {
+            DB::rollback();
+            $this->error($e->getMessage());
+        }
+        $this->success("删除成功");
+    }
+
+    /**
+     * 删除规格
+     *
+     * @throws Exception
+     */
+    public function deleteSpec() {
+
+        $uuid = input('param.uuid');
+        $goodsUuid = input('param.goodsUuid');
+
+        $item = $this->goodsSpecItemService->findByUuid($uuid);
+
+        if ($item['is_delete'] == 1) {
+            $this->error("该规格已删除");
+        }
+
+        DB::startTrans();
+        try {
+            $result = $this->goodsSpecItemService->updateByUuidAndData($uuid, ["is_delete" => 1]);
+
+            if ($result === false) {
+                throw new Exception($this->goodsSpecItemService->getError());
+            }
+
+            $result = $this->goodsSpecService->deleteByItemUuid($uuid);
+
+            if ($result === false) {
+                throw new Exception($this->goodsSpecService->getError());
+            }
+
+            $items = $this->goodsSpecItemService->getItemByGoodsUuid($goodsUuid);
+            if (empty($items)) {
+                $result = $this->goodsService->updateByUuidAndData($goodsUuid, array("is_spec" => 0));
+                if ($result === false) {
+                    throw new Exception($this->goodsService->getError());
+                }
+            }
+
+            DB::commit();
+
+        } catch (\PDOException $e) {
+            DB::rollback();
+            $this->error($e->getMessage());
+        }
+        $this->success("删除成功",url("edit",array("uuid" => $goodsUuid,"tab"=>'editSpec')));
     }
 
     /**
@@ -686,69 +782,4 @@ class Goods extends Common {
 
     }
 
-    public function delete() {
-
-        $id = input('param.id');
-
-        $menu = $this->goodsService->findById($id);
-
-        if($menu['is_delete'] == 1) {
-            $this->error("该商品已删除状态");
-        }
-
-        try {
-            $result = $this->goodsService->updateByIdAndData($id,["is_delete"=>1]);
-
-            if($result === false) {
-                $this->error($this->goodsService->getError());
-            }
-
-            $this->success("删除成功");
-
-        } catch (\PDOException $e) {
-            $this->error($e->getMessage());
-        }
-
-    }
-
-    public function editImg()
-    {
-        $id = input('param.id');
-
-        $info = $this->goodsService->findById($id);
-        if(empty($info)) {
-            $this->error("该商品不存在");
-        }
-        $gallery = $info["gallery"];
-        if (empty($gallery)) {
-            $gallery = array();
-        } else {
-            $gallery = json_decode($gallery,true);
-        }
-
-        $this->assign('info', $info);
-        $this->assign('gallery', $gallery);
-        return $this->fetch();
-    }
-
-    public function editImgPost()
-    {
-        $param = input('post.');
-        $id = $param['id'];
-        $gallery = $param["gallery"];
-        if (empty($id)) {
-            $this->error("产品不存在");
-        }
-        if (empty($gallery)) {
-            $this->error("上传至少一张图片");
-        }
-
-        $result = $this->goodsService->updateByIdAndData($id,
-            array("gallery" => json_encode($gallery),'update_time' => time()));
-        if($result === false) {
-            $this->error($this->goodsService->getError());
-        }
-
-        $this->success("上传成功");
-    }
 }

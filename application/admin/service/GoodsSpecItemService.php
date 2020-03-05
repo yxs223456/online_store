@@ -35,4 +35,13 @@ class GoodsSpecItemService extends Base
             ->where("is_delete",DbDataIsDeleteEnum::NO)
             ->whereIn("uuid",$uuids)->column("goods_spec_classify");
     }
+
+    public function findByUuid($uuid)
+    {
+        return $this->currentModel
+            ->where("is_delete",DbDataIsDeleteEnum::NO)
+            ->where("uuid",$uuid)
+            ->find();
+    }
+
 }

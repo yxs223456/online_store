@@ -1,0 +1,365 @@
+<?php $tab = empty($tab) ? "edit" : $tab; ?>
+<ul class="nav nav-tabs" id="myTab" role="tablist">
+    <li class="nav-item{$tab == 'edit' ? ' active' : ''}">
+        <a class="nav-link" id="edit-tab" data-toggle="tab" href="#edit" role="tab" aria-controls="edit" aria-selected="false">编辑</a>
+    </li>
+    <li class="nav-item{$tab == 'editSpec' ? ' active' : ''}">
+        <a class="nav-link" id="spec-tab" data-toggle="tab" href="#editSpec" role="tab" aria-controls="editSpec" aria-selected="false">规格</a>
+    </li>
+    <li class="nav-item{$tab == 'editSale' ? ' active' : ''}">
+        <a class="nav-link" id="sale-tab" data-toggle="tab" href="#editSale" role="tab" aria-controls="editSale" aria-selected="false">销售规格</a>
+    </li>
+    <li class="nav-item{$tab == 'editImg' ? ' active' : ''}">
+        <a class="nav-link" id="img-tab" data-toggle="tab" href="#editImg" role="tab" aria-controls="editImg" aria-selected="false">图片</a>
+    </li>
+</ul>
+
+<div class="tab-content" id="myTabContent">
+    <div class="tab-pane{$tab == 'edit' ? ' active in' : ' fade'}" id="edit" role="tabpanel" aria-labelledby="edit-tab">
+
+        <div class="ibox-content">
+            <form class="form-horizontal" name="editPost" id="editPost" method="post" action="{:url('editPost')}">
+                <div class="hr-line-dashed"></div>
+                <input id="uuid" type="hidden" class="form-control" name="uuid" value="{$info.uuid}" >
+                <div class="form-group">
+                    <label class="col-sm-3 control-label">商品名称：</label>
+                    <div class="input-group col-sm-3">
+                        <input id="goods_name" type="text" class="form-control" name="goods_name" value="{$info.goods_name|default=''}" >
+                    </div>
+                </div>
+                <div class="hr-line-dashed"></div>
+                <div class="form-group">
+                    <label class="col-sm-3 control-label">商品编号：</label>
+                    <div class="input-group col-sm-3">
+                        <input id="goods_no" type="text" class="form-control" name="goods_no" value="{$info.goods_no}">
+                    </div>
+                </div>
+                <div class="hr-line-dashed"></div>
+                <div class="form-group">
+                    <label class="col-sm-3 control-label">商品货号：</label>
+                    <div class="input-group col-sm-3">
+                        <input id="product_no" type="text" class="form-control" name="product_no" value="{$info.product_no}">
+                    </div>
+                </div>
+                <div class="hr-line-dashed"></div>
+                <div class="form-group">
+                    <label class="col-sm-3 control-label">市场价格：</label>
+                    <div class="input-group col-sm-3">
+                        <input id="market_price" type="text" class="form-control" name="market_price" value="{$info.market_price}">
+                    </div>
+                </div>
+                <div class="hr-line-dashed"></div>
+                <div class="form-group">
+                    <label class="col-sm-3 control-label">门店价格：</label>
+                    <div class="input-group col-sm-3">
+                        <input id="shop_price" type="text" class="form-control" name="shop_price" value="{$info.shop_price}">
+                    </div>
+                </div>
+                <div class="hr-line-dashed"></div>
+                <div class="form-group">
+                    <label class="col-sm-3 control-label">库存：</label>
+                    <div class="input-group col-sm-3">
+                        <input id="stock" type="text" class="form-control" name="stock" value="{$info.stock}">
+                    </div>
+                </div>
+                <div class="hr-line-dashed">
+                </div><div class="form-group">
+                <label class="col-sm-3 control-label">单位：</label>
+                <div class="input-group col-sm-3">
+                    <input id="goods_unit" type="text" class="form-control" name="goods_unit" value="{$info.goods_unit}">
+                </div>
+            </div>
+                <div class="hr-line-dashed"></div>
+                <div class="form-group">
+                    <label class="col-sm-3 control-label">是否上架：</label>
+                    <div class="col-sm-6">
+                        <div class="radio ">
+                            {if condition="$info.is_sale eq 1"}
+                            <input type="checkbox" class="js-switch" checked />&nbsp;&nbsp;默认开启
+                            <input name="is_sale" value="1" type="hidden">
+                            {else}
+                            <input type="checkbox" class="js-switch" />&nbsp;&nbsp;默认开启
+                            <input name="is_sale" value="0" type="hidden">
+                            {/if}
+                        </div>
+                    </div>
+                </div>
+                <div class="hr-line-dashed"></div>
+                <div class="form-group">
+                    <label class="col-sm-3 control-label">商品属性：</label>
+                    <div class="col-sm-6">
+                        {if condition="$info.is_best eq 1"}
+                        <input type="checkbox" name="is_best" checked />&nbsp;&nbsp;精品
+                        {else}
+                        <input type="checkbox" name="is_best" />&nbsp;&nbsp;精品
+                        {/if}
+                        {if condition="$info.is_hot eq 1"}
+                        <input type="checkbox" name="is_hot" checked />&nbsp;&nbsp;热销
+                        {else}
+                        <input type="checkbox" name="is_hot" />&nbsp;&nbsp;热销
+                        {/if}
+                        {if condition="$info.is_new eq 1"}
+                        <input type="checkbox" name="is_new" checked />&nbsp;&nbsp;新品
+                        {else}
+                        <input type="checkbox" name="is_new" />&nbsp;&nbsp;新品
+                        {/if}
+                        {if condition="$info.is_recommend eq 1"}
+                        <input type="checkbox" name="is_recommend" checked />&nbsp;&nbsp;推荐
+                        {else}
+                        <input type="checkbox" name="is_recommend" />&nbsp;&nbsp;推荐
+                        {/if}
+
+                    </div>
+                </div>
+                <div class="hr-line-dashed"></div>
+                <div class="form-group">
+                    <label class="col-sm-3 control-label">商品分类：</label>
+                    <div class="input-group col-sm-3 selected-box" id="selected-box">
+                        <?php foreach($category as $key => $value) : ?>
+
+                        <select class="form-control m-b change-select" name="goods_classify[]">
+                            <option value="">==请选择==</option>
+                            <?php foreach($value as $va) : ?>
+                            <?php if (isset($cateArr[$key]) && $va["uuid"] == $cateArr[$key]) {?>
+                            <option value="{$va.uuid}" selected>{$va.name}</option>
+                            <?php } else { ?>
+                            <option value="{$va.uuid}">{$va.name}</option>
+                            <?php } ?>
+                            <?php endforeach; ?>
+                        </select>
+
+                        <?php endforeach; ?>
+                    </div>
+                </div>
+                <div class="hr-line-dashed"></div>
+                <div class="form-group">
+                    <label class="col-sm-3 control-label">品牌：</label>
+                    <div class="input-group col-sm-3">
+                        <select class="form-control m-b change-select" name="brand">
+                            <option value="">==请选择==</option>
+                            <?php foreach($brand as $k => $b) : ?>
+                            <?php if ($k == $info["brand"]) {?>
+                            <option value="{$k}" selected>{$b}</option>
+                            <?php } else { ?>
+                            <option value="{$k}">{$b}</option>
+                            <?php } ?>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
+                </div>
+                <div class="hr-line-dashed"></div>
+                <div class="form-group">
+                    <label class="col-sm-3 control-label">封面图片：</label>
+                    <div class="input-group col-sm-3">
+                        <img id="image_url_src" src="{$info.image_url}" width="100px">
+                        <input type="hidden" id="image_url" name="image_url" value="{$info.image_url}"/>
+                        <input type="file" name="file" id="file_image_url"
+                               onchange="uploadImage('image_url_src', 'image_url', 'file_image_url')" class="form-control"/>
+                    </div>
+                </div>
+                <div class="hr-line-dashed"></div>
+                <div class="form-group">
+                    <label for="myEditor" class="col-sm-3 control-label">商品描述：</label>
+                    <!-- 加载编辑器的容器 -->
+                    <div class="input-group col-sm-8">
+                        <textarea id="myEditor" name="description">{$info.description}</textarea>
+                    </div>
+                </div>
+                <div class="hr-line-dashed"></div>
+
+                <div class="form-group">
+                    <div class="col-sm-4 col-sm-offset-3">
+                        <button id="formSubmit" type="button" class="btn btn-primary"><i class="fa fa-save"></i> 保存</button>&nbsp;&nbsp;&nbsp;
+                        <a class="btn btn-danger" href="javascript:history.go(-1);"><i class="fa fa-close"></i> 返回</a>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+    </div>
+    <div class="tab-pane{$tab == 'editSpec' ? ' active in' : ' fade'}" id="editSpec" role="tabpanel" aria-labelledby="spec-tab">
+
+        <div class="ibox-content">
+            <div class="hr-line-dashed"></div>
+            <?php foreach($classify as $v) : ?>
+
+            <div class="form-group">
+                <label class="col-sm-1 control-label">{$v["name"]}:</label>
+
+                <?php foreach($classifyItem as $item) : ?>
+                    <?php if($v["uuid"] == $item["goods_spec_classify"]) { ?>
+                        <div class="input-group col-sm-2 inline">
+                             <input type="text" class="form-control" disabled value="{$item['name']}">
+                            <a href="{:url('deleteSpec',['uuid'=>$item['uuid'],'goodsUuid'=>$info['uuid']])}"><span class="btn-del">删除</span></a>
+                        </div>
+                    <?php  } ?>
+                <?php endforeach;?>
+            </div>
+            <div class="hr-line-dashed" style="clear: both;"></div>
+            <?php endforeach;?>
+        </div>
+
+
+        <div class="ibox-content">
+            <form class="form-horizontal" name="editSpecPost" id="editSpecPost" method="post" action="{:url('editSpecPost')}">
+                <input type="hidden" name="goods_uuid" value="{$info.uuid}">
+                <div class="form-group live-bind">
+                    <label class="col-sm-2 control-label">规格分类：</label>
+                    <div class="input-group col-sm-2 selected-box">
+                        <select class="form-control m-b change-select" name="goods_spec_classify" id="specSelect">
+                            <option value="">==请选择==</option>
+                            <?php foreach($classify as $va) : ?>
+                            <option value="{$va.uuid}" image-data="{$va.allow_image}">{$va.name}</option>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="hr-line-dashed"></div>
+                <div class="ibox-content">
+
+                </div>
+                <div class="form-group">
+                    <div class="col-sm-4 col-sm-offset-3">
+                        <button id="formSubmitSpec" type="button" class="btn btn-primary"><i class="fa fa-save"></i> 保存</button>&nbsp;&nbsp;&nbsp;
+                        <a class="btn btn-danger" href="javascript:history.go(-1);"><i class="fa fa-close"></i> 返回</a>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+    </div>
+    <div class="tab-pane{$tab == 'editSale' ? ' active in' : ' fade'}" id="editSale" role="tabpanel" aria-labelledby="sale-tab">
+
+
+        <div class="ibox-content">
+            <div class="hr-line-dashed"></div>
+            <?php foreach($classify as $v) : ?>
+            <div>
+                <?php echo $v["name"] ?> :
+                <?php foreach($classifyItem as $item) : ?>
+                <?php if($v["uuid"] == $item["goods_spec_classify"]) { ?>
+                <?php if(in_array($item["uuid"],$goodsSpecUsed)) {?>
+                <input type="checkbox" checked class="spec" name="{$item['goods_spec_classify']}_{$item['uuid']}_{$item['name']}" value="{$item['goods_spec_classify']}_{$item['uuid']}_{$item['name']}">
+                <?php } else { ?>
+                <input type="checkbox" class="spec" name="{$item['goods_spec_classify']}_{$item['uuid']}_{$item['name']}" value="{$item['goods_spec_classify']}_{$item['uuid']}_{$item['name']}">
+                <?php } ?>
+                {$item["name"]}
+                <?php } ?>
+                <?php endforeach;?>
+            </div>
+            <div class="hr-line-dashed"></div>
+            <?php endforeach;?>
+        </div>
+
+
+        <div class="ibox-content">
+            <form class="form-horizontal" name="editSalePost" id="editSalePost" method="post" action="{:url('editSalePost')}">
+                <input type="hidden" name="goods_uuid" value="{$info.uuid}">
+
+                <div class="hr-line-dashed"></div>
+                <div id="ibox-content">
+                    <table class="table table-bordered table-hover">
+                        <tr>
+                            <th>推荐规格</th>
+                            <?php foreach($classifyTitle as $value): ?>
+                            <th>{$value}</th>
+                            <?php endforeach; ?>
+                            <th>货号</th>
+                            <th>市场价</th>
+                            <th>本店价</th>
+                            <th>库存</th>
+                            <th>销量</th>
+                        </tr>
+                        <?php foreach($list as $key => $item) : ?>
+                        <tr>
+                            <td>
+                                <input name="is_default[]" type="radio" <?php echo empty($item['is_default']) ? "" : " checked" ?> value="{$item['goods_spec_item_uuids']}">
+                                <input type="hidden" name="goods_spec_item_uuids[]" value="{$item['goods_spec_item_uuids']}"/>
+                            </td>
+                            <?php unset($item["is_default"]);unset($item["goods_spec_item_uuids"]); ?>
+                            <?php foreach($item as $k => $i): ?>
+                            <?php if(in_array($k,array("product_no","market_price","shop_price","stock","sale_num"),true)) { ?>
+                            <?php if ($k == "sale_num") {?>
+                            <td><input type="text" name="{$k}[]" value="{$i}" disabled></td>
+                            <?php } else { ?>
+                            <td><input type="text" name="{$k}[]" value="{$i}"></td>
+                            <?php } ?>
+                            <?php } else {?>
+                            <td>{$i}</td>
+                            <?php } ?>
+                            <?php endforeach; ?>
+                        </tr>
+                        <?php endforeach; ?>
+                    </table>
+                </div>
+                <div class="form-group">
+                    <div class="col-sm-4 col-sm-offset-3">
+                        <button id="getForm" type="button" class="btn btn-primary"><i class="fa fa-check-circle"></i> 获取销售规格</button>&nbsp;&nbsp;&nbsp;
+                        <button id="formSubmitSale" type="button" class="btn btn-primary"><i class="fa fa-save"></i> 保存</button>&nbsp;&nbsp;&nbsp;
+                        <a class="btn btn-danger" href="javascript:history.go(-1);"><i class="fa fa-close"></i> 返回</a>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+
+    </div>
+    <div class="tab-pane{$tab == 'editImg' ? ' active in' : ' fade'}" id="editImg" role="tabpanel" aria-labelledby="img-tab">
+        <style>
+            .image-box {
+                position: relative;
+                z-index: 2;
+                margin-left: 5px;
+                margin-top: 5px;
+                float:left;
+                height: 180px;
+                width: 180px;
+            }
+            .image-show {
+                height: 180px;width: 180px;
+                border: 1px solid rgb(59, 114, 165);
+            }
+            .btn-del {
+                background: #1094FA;
+                color: #ffffff;
+                cursor: pointer;
+                height: 18px;
+                line-height: 18px;
+                padding: 0 5px;
+                position: absolute;
+                right: 0px;
+                top: 0px;
+                z-index: 9999;
+            }
+        </style>
+
+        <div class="ibox-content">
+            <form class="form-horizontal" name="editImgPost" id="editImgPost" method="post" action="{:url('editImgPost')}">
+                <div class="hr-line-dashed"></div>
+                <input type="hidden" name="uuid" value="{$info.uuid}" />
+                <div class="form-group">
+                    <div class="input-group col-sm-12" id="images-box">
+                        {foreach $gallery as $vo}
+                        <div class="image-box">
+                            <img src="{$vo}" class="image-show">
+                            <input type="hidden" name="gallery[]" value="{$vo}"/>
+                            <span class="btn-del btn-del-img">删除</span>
+                        </div>
+                        {/foreach}
+                    </div>
+                </div>
+                <div class="hr-line-dashed"></div>
+                <div class="form-group">
+                    <div class="col-sm-4 col-sm-offset-3">
+                        <input type="file" id="upload-file" name="uploads" value="" style="display: none;" multiple="multiple" onchange="uploadImages(this)">
+                        <button id="upload" type="button" class="btn btn-primary"><i class="fa fa-cloud-upload"></i> 选择图片</button>&nbsp;&nbsp;&nbsp;
+                        <button id="formSubmitImg" type="button" class="btn btn-primary"><i class="fa fa-save"></i> 保存</button>&nbsp;&nbsp;&nbsp;
+                        <a class="btn btn-danger" href="javascript:history.go(-1);"><i class="fa fa-close"></i> 返回</a>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+    </div>
+</div>

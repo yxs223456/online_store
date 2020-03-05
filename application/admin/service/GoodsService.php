@@ -13,26 +13,14 @@ class GoodsService extends Base {
         $this->currentModel = new Goods();
     }
 
-    /**
-     * 生成uuid
-     *
-     * @param $length
-     * @return string
-     */
-    public function getUuid($length)
-    {
-        $pattern = '1234567890abcdefghijklmnopqrstuvwxyz';
-        $key = "";
-        for ($i = 0; $i < $length; $i++) {
-            $key .= $pattern{mt_rand(0, 35)}; //生成php随机数
-        }
-        return $key;
-    }
-
     public function findByUuid($uuid) {
         return $this->currentModel
             ->where("is_delete",DbDataIsDeleteEnum::NO)
-            ->where("uuid",$uuid)->find()->toArray();
+            ->where("uuid",$uuid)->find();
+    }
+
+    public function updateByAllowFieldAndUuid($data,$uuid,$allowField=true) {
+        return $this->currentModel->isUpdate(true)->allowField($allowField)->save($data,["uuid" => $uuid]);
     }
 
     /**

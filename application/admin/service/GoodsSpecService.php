@@ -102,4 +102,11 @@ class GoodsSpecService extends Base
         }
         return $list;
     }
+
+    public function deleteByItemUuid($itemUuid)
+    {
+        return $this->currentModel
+            ->whereLike("goods_spec_item_uuids",$itemUuid)
+            ->update(array("is_delete" => DbDataIsDeleteEnum::YES));
+    }
 }
