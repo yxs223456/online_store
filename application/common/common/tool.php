@@ -220,3 +220,12 @@ function gmt_iso8601($time) {
     $expiration = substr($expiration, 0, $pos);
     return $expiration."Z";
 }
+
+function getDirName()
+{
+    $dirname = config("app.app_request_dirname");
+    if (empty($dirname)) {
+        return '';
+    }
+    return "/" . trim($dirname, "/");
+}

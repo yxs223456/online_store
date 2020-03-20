@@ -15,6 +15,7 @@ class GoodsValidate extends Validate
         'market_price' => 'require|float',
         'shop_price' => 'require|float',
         'stock' => 'require|number',
+        'weight' => 'number',
         'goods_unit' => 'require|max:10',
 //        'is_sale' => 'require',
         'goods_classify_path' => 'require|max:255',
@@ -40,6 +41,7 @@ class GoodsValidate extends Validate
         'shop_price.float' => '商店价格格式不正确',
         'stock.require' => '库存不能为空',
         'stock.number' => '库存格式不正确',
+        'weight.number' => '排序格式不正确',
         'goods_unit.require' => '商品单位不能为空',
         'goods_unit.max' => '商品单位长度不能超过10',
         'goods_classify_path.require' => '商品分类不能为空',
@@ -50,10 +52,10 @@ class GoodsValidate extends Validate
 
     protected $scene = [
         'addPost' => ["uuid", "goods_no", "product_no", "goods_name", "market_price", "shop_price",
-            "stock", "goods_unit", "goods_classify_path", "first_goods_classify", "last_goods_classify",
+            "stock", "weight", "goods_unit", "goods_classify_path", "first_goods_classify", "last_goods_classify",
             "description"],
         'editPost' => ["market_price", "shop_price",
-            "stock", "goods_unit", "goods_classify_path", "first_goods_classify", "last_goods_classify",
+            "stock", "weight", "goods_unit", "goods_classify_path", "first_goods_classify", "last_goods_classify",
             "description"]
     ];
 }
